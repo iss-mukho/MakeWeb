@@ -20,49 +20,40 @@
         <nav class="navbar navbar-light bg-light static-top">
             <div class="container">
                 <a class="navbar-brand" href="http://localhost:3000/">묵호의 놀이터</a>
-                <a class="btn btn-primary" href="http://localhost:3000/login">로그인</a>
-                <a class="btn btn-primary" href="http://localhost:3000/register">회원가입</a>
+                <div class="user">
+                    <a class="btn btn-primary" href="http://localhost:3000/login">로그인</a>
+                </div>
             </div>
         </nav>
         <div class="container px-5 my-5">
-            <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+            <form action="/register" method="post" id="contactForm" data-sb-form-api-token="API_TOKEN">
                 <div class="form-floating mb-3">
-                    <input class="form-control" id="id" type="text" placeholder="ID" data-sb-validations="required" />
-                    <label for="id">아이디</label>
+                    <input class="form-control" name="ID" id="ID" type="text" required minlength='1' maxlength='20' placeholder="ID" data-sb-validations="required" />
+                    <label for="ID">아이디</label>
                     <div class="invalid-feedback" data-sb-feedback="id:required">아이디를 입력하세요.</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input class="form-control" id="password" type="password" placeholder="password" data-sb-validations="required" />
+                    <input class="form-control" name="password" id="password" required minlength='1' maxlength='20' type="password" placeholder="password" data-sb-validations="required" />
                     <label for="password">비밀번호</label>
                     <div class="invalid-feedback" data-sb-feedback="password:required">비밀번호를 입력하세요.</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input class="form-control" id="passwordConfirm" type="password" placeholder="password confirm" data-sb-validations="required" />
+                    <input class="form-control" name="pw_com" id="passwordConfirm" required minlength='1' maxlength='20' type="password" placeholder="password confirm" data-sb-validations="required" />
                     <label for="passwordConfirm">비밀번호 확인</label>
                     <div class="invalid-feedback" data-sb-feedback="passwordConfirm:required">비밀번호 확인을 해주세요.</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="userType" aria-label="사용자 유형">
+                    <select class="form-select" name="type" id="type" aria-label="사용자 유형">
                         <option value="작곡가">작곡가</option>
                         <option value="가수">가수</option>
                     </select>
                     <label for="사용자유형">사용자 유형</label>
                 </div>
-                <div class="d-none" id="submitSuccessMessage">
-                    <div class="text-center mb-3">
-                        <div class="fw-bolder">Form submission successful!</div>
-                        <p>To activate this form, sign up at</p>
-                        <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-                    </div>
-                </div>
-                <div class="d-none" id="submitErrorMessage">
-                    <div class="text-center text-danger mb-3">Error sending message!</div>
-                </div>
                 <div class="d-grid">
-                    <button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Submit</button>
+                    <button class="btn btn-primary btn-lg" id="submitButton" type="submit">가입하기</button>
                 </div>
+                <section class="messages" style="color:crimson;"> <%= message %> </section>
             </form>
         </div>
     </body>
 </html>
-<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>

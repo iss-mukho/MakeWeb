@@ -39,7 +39,7 @@ passport.use('local-join', new LocalStrategy({
         usertypeField: 'type',
         passReqToCallback: true
      }, function(req, ID, password, done){
-            var query = connection.query('select * from user where ID=?', [ID], function(err, rows){
+            var query = connection.query('select * from userDB where ID=?', [ID], function(err, rows){
             if(err) return done(err);
 
             if(rows.length){ // database에 입력한 ID값이 있는가?
@@ -52,10 +52,10 @@ passport.use('local-join', new LocalStrategy({
                     return done(null, false, {message : '비밀번호가 일치하지 않습니다.'})
                 }
                 else{
-                    var sql = {ID: ID, password: password, userType:req.body.type};
-                    var query = connection.query('insert into user set ?', sql, function(err, rows){
+                    var sql = {ID: ID, password: password, type:req.body.type};
+                    var query = connection.query('insert into userDB set ?', sql, function(err, rows){
                         if(err) throw err
-                        console.log(ID, " 사용자가 추가되었습니다.")
+                        console.log(ID, "알림: 사용자가 추가되었습니다.")
                         return done(null, {'ID' : ID});
                     })
                 }

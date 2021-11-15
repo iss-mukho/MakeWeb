@@ -11,9 +11,12 @@ const PORT = 3000
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
-app.use(express.static(__dirname + "/public")); // static directory
-app.use(express.static(__dirname + "/css"));
-app.use(express.static(__dirname + "/assets"));
+app.use("/public", express.static(__dirname + "/public")); // static directory
+app.use("/router", express.static(__dirname + "/router"));
+app.use("/views", express.static(__dirname + "/views"))
+app.use("/css", express.static(__dirname + "/css"));
+app.use("/assets", express.static(__dirname + "/assets"));
+app.use("/js", express.static(__dirname + "/js"));
 app.set('view engine', 'ejs')
 
 app.use(session({

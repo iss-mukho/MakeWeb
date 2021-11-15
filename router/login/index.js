@@ -37,11 +37,12 @@ passport.use('local-login', new LocalStrategy({
         passwordField: 'password',
         passReqToCallback: true
      }, function(req, ID, password, done){
-            var query = connection.query('select * from user where ID=?', [ID], function(err, rows){
+            var query = connection.query('select * from userDB where ID=?', [ID], function(err, rows){
             if(err) return done(err);
             
             if(rows.length){ // database에 입력한 ID값이 있는가?
                 if(password == rows[0].password){ // 비밀번호와 확인이 같은가?
+                    console.log("알림: "+ID+" 유저 로그인")
                     return done(null, {'ID' : ID});
                 }
                 else{
@@ -57,16 +58,10 @@ passport.use('local-login', new LocalStrategy({
     }
 ));
 
-router.post('/', function(req, res, next){
-    passport.authenticate('local-login', function(err, user, info){
-        if(err) res.status(500).json(err);
-        if(!user) return res.status(401).json(info.message);
-        
-        req.logIn(user, function(err){
-            if(err) {return next(err);}
-            return res.json(user);
-        });
-    })(req, res, next);
-})
+router.post('/', passport.authenticate('local-login', {
+    successRedirect: '/main',
+    failureRedirect: '/login',
+    failureFlash: true
+}))
 
 module.exports = router;

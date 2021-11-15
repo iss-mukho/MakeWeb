@@ -1,10 +1,13 @@
 var express = require('express')
 var app = express()
 var router = express.Router();
-var path = require('path') // 상대경로
 
 router.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, "../../public/form.html"))
+    console.log(req.user+" 유저가 로그아웃합니다.")
+    req.logout();
+    req.session.save(function(){
+        res.redirect('/');
+    })
 });
 
 module.exports = router;
