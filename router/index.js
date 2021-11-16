@@ -7,6 +7,7 @@ var main = require('./main/main')
 var register = require('./register/index')
 var login = require('./login/index')
 var logout = require('./logout/index')
+var board = require('./board/index')
 
 // URL routing
 // req = request, res = respond
@@ -19,5 +20,6 @@ router.use('/main', main)
 router.use('/register', register)
 router.use('/login', login)
 router.use('/logout', logout)
+router.use('/board', board)
 
 module.exports = router;
