@@ -15,7 +15,8 @@
 
 sql 사용 파일<br>
     router/login/index.js<br>
-    router/register/index.js<br><br>
+    router/register/index.js<br>
+    router/board/index.js<br><br>
 
 DB 구조(*ID, password, type) -> 형식에 맞게 추가<br>
 *ID varchar(20), password varchar(20), type varchar(10) // type이 운영자인 경우 서버에서 변경<br>
@@ -34,9 +35,15 @@ CREATE TABLE `board` (
   PRIMARY KEY (`idx`)
 );
 
+DB구조 - board에서 사용됨(*idx, name, title, content, regdate, modidate, passwd, hit)<br>
+*idx int, name varchar(50), title varchar(50), content mediumtext, regdate datetime, modidate datetime, passwd varchar(50), hit int<br>
+
+
 LF 오류시 git config --global core.autocrlf true 입력<br><br>
 
 
+최종 수정: 2021-11-17 06:01<br>
+최종 수정 내용: 게시판의 글쓰기 및 글 열람 기능 추가.
 최종 수정: 2021-11-17 14:25<br>
 최종 수정 내용: 세션에 ID + 닉네임 전달기능 추가
 수정 내용: 경로 지정 수정, 제목 추가, userDB, 회원가입에 nickname요소 추가

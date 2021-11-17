@@ -14,9 +14,10 @@ router.get('/list/:page', function(req, res, next) {
 
     board.query(sql, function(err,rows) {
         if (err) console.error("err : " + err);
-        var id = req.user;
-        if(!id) id = "수정예정"
-        res.render('list.ejs', {'ID':id, title: '게시판 리스트', rows: rows})
+        var id = req.user.ID;
+        var nickname = req.user.nickname;
+        if(!id) nickname = "손님" // 수정 예정
+        res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows})
     })
 });
 
@@ -40,6 +41,16 @@ router.post('/write', function(req,res,next){
         if (err) console.error("err : " + err);
         res.redirect('/board/list/1');
     });
+})
+
+router.get('/read/:idx', function(req,res,next){
+    var idx = req.params.idx
+    var sql = "select idx, name, title, content, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
+    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate,hit from board where idx=?";
+    board.query(sql,[idx], function(err,row){
+        if(err) console.error(err)
+        res.render('read.ejs', {title:"글 상세", row:row[0]})
+    })
 })
 
 module.exports = router;
