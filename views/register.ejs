@@ -44,6 +44,11 @@
                     <div class="invalid-feedback" data-sb-feedback="passwordConfirm:required">비밀번호 확인을 해주세요.</div>
                 </div>
                 <div class="form-floating mb-3">
+                    <input class="form-control" name="nickname" id="nickname" type="text" required minlength='1' maxlength='20' placeholder="nickname" data-sb-validations="required" />
+                    <label for="nickname">닉네임</label>
+                    <div class="invalid-feedback" data-sb-feedback="nickname:required">닉네임을 입력하세요.</div>
+                </div>
+                <div class="form-floating mb-3">
                     <select class="form-select" name="type" id="type" aria-label="사용자 유형">
                         <option value="작곡가">작곡가</option>
                         <option value="가수">가수</option>

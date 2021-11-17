@@ -24,12 +24,14 @@ router.get('/', function(req, res){
 })
 
 passport.serializeUser(function(user, done){
-    console.log('passport session save: '+ user.ID)
-    done(null, user.ID)
+    console.log('passport session save: '+ user.ID + '(' + user.nickname + ')')
+    done(null, user)
 });
-passport.deserializeUser(function(ID, done){
-    console.log('passport session get ID: '+ ID)
-    done(null, ID); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
+passport.deserializeUser(function(user, done){
+    var ID = user.ID;
+    var nickname = user.nickname;
+    console.log('passport session get ID: '+ ID + '(' + nickname + ')')
+    done(null, {'ID': ID, 'nickname':nickname}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
 })
 
 passport.use('local-join', new LocalStrategy({
@@ -37,6 +39,7 @@ passport.use('local-join', new LocalStrategy({
         passwordField: 'password',
         pwcomField: 'pw_com',
         usertypeField: 'type',
+        nicknameField: 'nickname',
         passReqToCallback: true
      }, function(req, ID, password, done){
             var query = connection.query('select * from userDB where ID=?', [ID], function(err, rows){
@@ -52,11 +55,20 @@ passport.use('local-join', new LocalStrategy({
                     return done(null, false, {message : '비밀번호가 일치하지 않습니다.'})
                 }
                 else{
-                    var sql = {ID: ID, password: password, type:req.body.type};
-                    var query = connection.query('insert into userDB set ?', sql, function(err, rows){
-                        if(err) throw err
-                        console.log("알림: 사용자가 추가되었습니다.(" + ID +")")
-                        return done(null, {'ID' : ID});
+                    var subqry = connection.query('select * from userDB where nickname=?', [req.body.nickname], function(err, rows_){
+                        if(err) return done(err);
+                        if(rows_.length){
+                            console.log("알림: 중복된 닉네임입니다.")
+                            return done(null, false, {message : '중복된 닉네임입니다.'})
+                        }
+                        else{
+                            var sql = {ID: ID, password: password, type:req.body.type, nickname:req.body.nickname};
+                            var query = connection.query('insert into userDB set ?', sql, function(err, rows){
+                                if(err) throw err
+                                console.log("알림: 사용자가 추가되었습니다.(" + ID +", " + req.body.nickname + ")")
+                                return done(null, {'ID' : ID, 'nickname' : req.body.nickname});
+                            })
+                        }
                     })
                 }
             }

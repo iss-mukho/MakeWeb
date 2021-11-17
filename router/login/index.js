@@ -24,12 +24,14 @@ router.get('/', function(req, res){
 })
 
 passport.serializeUser(function(user, done){
-    console.log('passport session save: '+ user.ID)
-    done(null, user.ID)
+    console.log('passport session save: '+ user.ID + '(' + user.nickname + ')')
+    done(null, user)
 });
-passport.deserializeUser(function(ID, done){
-    console.log('passport session get ID: '+ ID)
-    done(null, ID); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
+passport.deserializeUser(function(user, done){
+    var ID = user.ID;
+    var nickname = user.nickname;
+    console.log('passport session get ID: '+ ID + '(' + nickname + ')')
+    done(null, {'ID': ID, 'nickname':nickname}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
 })
 
 passport.use('local-login', new LocalStrategy({
@@ -42,8 +44,8 @@ passport.use('local-login', new LocalStrategy({
             
             if(rows.length){ // database에 입력한 ID값이 있는가?
                 if(password == rows[0].password){ // 비밀번호와 확인이 같은가?
-                    console.log("알림: "+ID+" 유저 로그인")
-                    return done(null, {'ID' : ID});
+                    console.log("알림: "+ ID +"(" + rows[0].nickname + ") 유저 로그인")
+                    return done(null, {'ID' : ID, 'nickname' : rows[0].nickname});
                 }
                 else{
                     console.log("알림: 잘못된 비밀번호입니다.")
