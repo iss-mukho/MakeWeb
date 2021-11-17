@@ -53,4 +53,25 @@ router.get('/read/:idx', function(req,res,next){
     })
 })
 
+router.post('/update', function(req,res,next){
+    var idx = req.body.idx
+    var name = req.body.name
+    var title = req.body.title
+    var content = req.body.content
+    var passwd = req.body.passwd
+    var datas = [name, title, content, idx, passwd]
+
+    var sql = "update board set name = ?,title=?,content=?,modidate=now() where idx =? and passwd=?"
+    board.query(sql,datas,function(err,result){
+        if(err) console.error(err)
+        if(result.affectedRows==0){
+            res.send("<script>alert('패스워드가 일치하지 않습니다.');history.back();</script>")
+        }
+        else
+        {
+            res.redirect('/board/read/'+idx)
+        }
+    })
+})
+
 module.exports = router;
