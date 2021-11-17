@@ -55,7 +55,7 @@ passport.use('local-join', new LocalStrategy({
                     var sql = {ID: ID, password: password, type:req.body.type};
                     var query = connection.query('insert into userDB set ?', sql, function(err, rows){
                         if(err) throw err
-                        console.log(ID, "알림: 사용자가 추가되었습니다.")
+                        console.log("알림: 사용자가 추가되었습니다.(" + ID +")")
                         return done(null, {'ID' : ID});
                     })
                 }

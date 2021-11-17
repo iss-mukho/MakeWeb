@@ -24,4 +24,5 @@ DB 구조(*ID, password, type) -> 형식에 맞게 추가<br>
 LF 오류시 git config --global core.autocrlf true 입력<br><br>
 
 
-최종 수정: 2021-11-16 14:03
+최종 수정: 2021-11-16 18:54<br>
+최종 수정 내용: 경로 지정 수정
