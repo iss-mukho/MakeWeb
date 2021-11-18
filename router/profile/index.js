@@ -20,9 +20,10 @@ passport.deserializeUser(function(user, done){
 
 // main page는 login이 된 상태(세션정보가 있을때만) 접근이 가능하게 하자 -> info에 구현해놓음.
 router.get('/', function(req, res){
-    var id = req.user.ID;
-    if(!id) res.redirect('/login')
-    else{
+    try{
+        var id = req.session.passport.user.ID;
+        if(!id) res.redirect('/login')
+
         var sql = "select profilemsg, type from userdb where id =?";
     
         myinfo.query(sql,[id],function(err,rows) {
@@ -34,12 +35,17 @@ router.get('/', function(req, res){
             res.render('profile.ejs', {'ID':id, 'nickname': nickname, 'type': type, 'profilemsg': profilemsg})
         })
     }
+    catch{
+        res.redirect('/login')
+    }
+
 });
 
 router.get('/update', function(req,res){
-    var id = req.user.ID;
-    if(!id) res.redirect('/login')
-    else{
+    try{
+        var id = req.user.ID;
+        if(!id) res.redirect('/login')
+
         var sql = 'select profilemsg from userdb where id ="'+req.user.ID+'"';
 
         myinfo.query(sql, function(err,rows) {
@@ -50,6 +56,9 @@ router.get('/update', function(req,res){
             var profilemsg = rows[0].profilemsg;
             res.render('profmsgedit.ejs', {'ID':id, 'nickname': nickname, 'type':type, 'profilemsg': profilemsg, 'message':''});
         })
+    }
+    catch{
+        if(!id) res.redirect('/login')
     }
 })
 
