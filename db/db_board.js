@@ -6,10 +6,10 @@ module.exports=function(){
         init: function(){
             return mysql.createConnection({
                 host:'localhost',
-                port:'3306',
+                port:3306,
                 user:'root',
-                password:'2016104101',
-                database:'board'
+                password:'',
+                database:'singer_composer'
                 // host:config.host,
                 // port:config.port,
                 // user:config.user,

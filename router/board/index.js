@@ -15,7 +15,7 @@ router.get('/list/:page', function(req, res, next) {
     else{
         var page = req.params.page;
         var sql = "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
-        "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate,hit from board";
+        "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit from board";
     
         board.query(sql, function(err,rows) {
             if (err) console.error("err : " + err);
@@ -26,7 +26,6 @@ router.get('/list/:page', function(req, res, next) {
         })
     }
 });
-
 
 router.get('/list', function(req,res,next){
     var id = req.user;
@@ -52,21 +51,30 @@ router.post('/write', function(req,res,next){
     var passwd = req.body.passwd
     var datas = [name,title,content,passwd]
 
-    var sql = "insert into board(name, title, content, regdate, modidate, passwd,hit) values(?,?,?,now(),now(),?,0)";
+    var idx_;
+    var sql_ = "select max(idx) as idx from board"
+    board.query(sql_, function(err, rows){
+        if(err) console.error("err : " + err);
+        idx_ = rows[0].idx+1;
+    });
+
+    var sql = "insert into board(name, title, content, regdate, modidate, passwd, hit) values(?,?,?,now(),now(),?,0)";
     board.query(sql,datas, function (err, rows) {
         if (err) console.error("err : " + err);
 
+        console.log(idx_)
         var id = req.user.ID;
         var nickname = req.user.nickname;
         console.log(req.user.ID+'('+nickname+') 유저가 게시글을 작성했습니다.')
-        res.redirect('/board/list/1');
+
+        res.redirect('/board/read/'+idx_);
     });
 })
 
 router.get('/read/:idx', function(req,res,next){
     var idx = req.params.idx
     var sql = "select idx, name, title, content, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
-    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate,hit from board where idx=?";
+    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit from board where idx=?";
     board.query(sql,[idx], function(err,row){
         if(err) console.error(err)
 
@@ -75,6 +83,13 @@ router.get('/read/:idx', function(req,res,next){
         else{
             var id = req.user.ID;
             var nickname = req.user.nickname;
+            
+            // 조회수 증가
+            var sql_ = 'update board set hit=hit+1 where idx="'+idx+'"';
+            board.query(sql_, function(err, row){
+                if(err) console.error(err)
+            })
+
             console.log(req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 보고 있습니다.')
             res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"글 상세", row:row[0]})
         }

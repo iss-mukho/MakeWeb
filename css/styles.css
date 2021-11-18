@@ -11383,3 +11383,34 @@ footer.footer {
   padding-top: 4rem;
   padding-bottom: 4rem;
 }
+
+#prof_con{
+  margin-top: 50px;
+  margin-left: 15%;
+  margin-right: 15%;
+  width: 70%;
+}
+
+.column{
+  display: inline-block;
+  width: 48%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.bx_group{
+  margin-top: 15px;
+  border-radius: 1px;
+  border-color: rgb(153, 153, 153);
+  border-width: 1px;
+  padding: 20px;
+  border-style: solid;
+}
+
+.wrap{
+  align-items: center;
+}
+
+.info{
+  
+}

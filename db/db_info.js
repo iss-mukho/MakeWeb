@@ -2,10 +2,10 @@ module.exports=(function(){
     return{
         board:{
             host:'localhost',
-            port:'3306',
+            port:3306,
             user:'root',
-            password:'2016104101',
-            database:'board'
+            password:'',
+            database:'singer_composer'
         },
         example: {
             host: '',

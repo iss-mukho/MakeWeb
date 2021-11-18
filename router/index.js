@@ -8,6 +8,9 @@ var register = require('./register/index')
 var login = require('./login/index')
 var logout = require('./logout/index')
 var board = require('./board/index')
+var profile = require('./profile/index')
+var about = require('./about/index')
+var chat = require('./chat/chat')
 
 // URL routing
 // req = request, res = respond
@@ -21,5 +24,8 @@ router.use('/register', register)
 router.use('/login', login)
 router.use('/logout', logout)
 router.use('/board', board)
+router.use('/profile', profile)
+router.use('/about', about)
+router.use('/chat', chat)
 
 module.exports = router;
