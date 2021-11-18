@@ -10,7 +10,7 @@ var board = mysql_odbc.init();
 
 router.get('/list/:page', function(req, res, next) {
     var id = req.user;
-    if(!id) res.redirect('/board/list')
+    if(!id) res.redirect('/board/list/1')
     else{
         var page = req.params.page;
         var sql = "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
@@ -20,7 +20,6 @@ router.get('/list/:page', function(req, res, next) {
             if (err) console.error("err : " + err);
             var id = req.user.ID;
             var nickname = req.user.nickname;
-            if(!id) nickname = "손님" // 수정 예정
             res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows})
         })
     }
