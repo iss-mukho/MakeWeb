@@ -33,7 +33,7 @@ CREATE TABLE `board` (
   `passwd` varchar(50) NOT NULL,
   `hit` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`idx`)
-);
+);<br><br>
 
 DB구조 - board에서 사용됨(*idx, name, title, content, regdate, modidate, passwd, hit)<br>
 *idx int, name varchar(50), title varchar(50), content mediumtext, regdate datetime, modidate datetime, passwd varchar(50), hit int<br>
@@ -42,6 +42,6 @@ DB구조 - board에서 사용됨(*idx, name, title, content, regdate, modidate, 
 LF 오류시 git config --global core.autocrlf true 입력<br><br>
 
 
-최종 수정: 2021-11-18 20:03<br>
-최종 수정 내용: 메뉴바/하단 추가, 게시판에 기본 서식 추가, 로그인시에만 게시판 관련 경로에 접근가능하게 함, 사용자 로그 생성
+최종 수정: 2021-11-19 12:19<br>
+최종 수정 내용: 메뉴바/하단 추가, 게시판에 기본 서식 추가, 로그인시에만 게시판 관련 경로에 접근가능하게 함, 사용자 로그 생성<br>
 수정 내용: 경로 지정 수정, 제목 추가, userDB, 회원가입에 nickname요소 추가, 세션에 ID + 닉네임 전달기능 추가, 게시판의 글쓰기 및 글 열람 기능 추가.

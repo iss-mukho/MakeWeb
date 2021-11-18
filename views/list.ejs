@@ -34,7 +34,6 @@
         </nav>
         <div class="container px-5 my-5">
             <h1><%= title %></h1>
-            <a href="/board/write">글쓰기</a>
             <table border="1">
                 <tr>
                     <td>번호</td>
@@ -45,9 +44,11 @@
                     <td>등록일</td>
                 </tr>
                 <%
-                for(var i=0; i<rows.length; i++)
-                {
-                    var data = rows[i];
+                for(var i = (page * page_num) - page_num; i < (page * page_num); i++) {
+                if(i > length){
+                    i++;
+                }else{
+                    var data = rows[i]
                 %>
                 <tr>
                     <td><%=data.idx%></td>
@@ -57,8 +58,25 @@
                     <td><%=data.modidate%></td>
                     <td><%=data.regdate%></td>
                 </tr>
-                <%}%>
+                <% }
+                }
+                %>
+                <tr>
+                    <td colspan="6">
+                        <%
+                        for(var j = 0; j < rows.length / page_num; j++){
+                        %>
+                        [<a href="/board/list/<%= j + 1 %>"><%= j + 1 %></a>]
+                        <%
+                        }
+                        %>
+                    </td>
+                </tr>
             </table>
+            <nav class="navbar">
+                <a class="btn btn-outline-primary me-2" href="/board/write">글쓰기</a>
+            </nav>
+            
         </div>
         <!-- Footer-->
         <footer class="footer bg-light">

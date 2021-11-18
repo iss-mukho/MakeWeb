@@ -31,7 +31,13 @@
     </nav>
     <div class="container px-5 my-5">
         <h1><%= title %></h1>
- 
+        <script>
+            function submit2(frm){
+                frm.action="/board/delete";
+                frm.submit();
+                return true;
+            }
+        </script>
         <form action="/board/update" method="post">
             <table border="1">
                 <input type="hidden" name="idx" value="<%=row.idx%>"/>
@@ -64,9 +70,12 @@
                     <td><%=row.hit%></td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="3">
                         <button type="submit">글 수정</button>
-                        <a href="/board/list">목록</a>
+                        <button type="summit" onclick="return submit2(this.form);">글 삭제</button>
+                        <a href="/board/list">
+                            <input type="button" value="목록">
+                        </a>
                     </td>
                 </tr>
             </table>
