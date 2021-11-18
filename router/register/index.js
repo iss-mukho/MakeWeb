@@ -46,19 +46,19 @@ passport.use('local-join', new LocalStrategy({
             if(err) return done(err);
 
             if(rows.length){ // database에 입력한 ID값이 있는가?
-                console.log("알림: 중복된 ID입니다.")
+                console.log("알림: 중복된 ID입니다.("+ID+")")
                 return done(null, false, {message : '중복된 ID입니다.'})
             }
             else{
                 if(password != req.body.pw_com){ // 비밀번호와 확인이 같지 않은가?
-                    console.log("알림: 비밀번호가 일치하지 않습니다.")
+                    console.log("알림: 비밀번호가 일치하지 않습니다.(시도 중인 아이디: "+ID+")")
                     return done(null, false, {message : '비밀번호가 일치하지 않습니다.'})
                 }
                 else{
                     var subqry = connection.query('select * from userDB where nickname=?', [req.body.nickname], function(err, rows_){
                         if(err) return done(err);
                         if(rows_.length){
-                            console.log("알림: 중복된 닉네임입니다.")
+                            console.log("알림: 중복된 닉네임입니다.("+req.body.nickname+")")
                             return done(null, false, {message : '중복된 닉네임입니다.'})
                         }
                         else{

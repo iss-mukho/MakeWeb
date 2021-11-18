@@ -48,12 +48,12 @@ passport.use('local-login', new LocalStrategy({
                     return done(null, {'ID' : ID, 'nickname' : rows[0].nickname});
                 }
                 else{
-                    console.log("알림: 잘못된 비밀번호입니다.")
+                    console.log("알림: 잘못된 비밀번호입니다.(시도된 아이디: "+ID+")")
                     return done(null, false, {message : '잘못된 비밀번호입니다.'})
                 }
             }
             else{
-                console.log("알림: ID를 찾을 수 없습니다.")
+                console.log("알림: ID를 찾을 수 없습니다.(시도된 아이디: "+ID+")")
                 return done(null, false, {message : 'ID를 찾을 수 없습니다.'})
             }
         })
