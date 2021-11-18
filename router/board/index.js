@@ -1,3 +1,4 @@
+const e = require('express');
 var express = require('express');
 const { connect } = require('http2');
 var router = express.Router();
@@ -8,25 +9,37 @@ var board = mysql_odbc.init();
 
 
 router.get('/list/:page', function(req, res, next) {
-    var page = req.params.page;
-    var sql = "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
-    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate from board";
-
-    board.query(sql, function(err,rows) {
-        if (err) console.error("err : " + err);
-        var id = req.user.ID;
-        var nickname = req.user.nickname;
-        if(!id) nickname = "손님" // 수정 예정
-        res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows})
-    })
+    var id = req.user;
+    if(!id) res.redirect('/board/list')
+    else{
+        var page = req.params.page;
+        var sql = "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
+        "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate from board";
+    
+        board.query(sql, function(err,rows) {
+            if (err) console.error("err : " + err);
+            var id = req.user.ID;
+            var nickname = req.user.nickname;
+            if(!id) nickname = "손님" // 수정 예정
+            res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows})
+        })
+    }
 });
 
 router.get('/list', function(req,res,next){
-    res.redirect('/board/list/1')
+    var id = req.user;
+    if(!id) res.sendFile(path.join(__dirname, "../../public/login.html"))
+    else res.redirect('/board/list/1')
 })
 
 router.get('/write', function(req,res,next){
-    res.render('write.ejs', {title:"게시판 글 쓰기"})
+    var id = req.user;
+    if(!id) res.sendFile(path.join(__dirname, "../../public/login.html"))
+    else{
+        var id = req.user.ID;
+        var nickname = req.user.nickname;
+        res.render('write.ejs', {'ID':id, 'nickname': nickname, title:"게시판 글 쓰기"})
+    }
 })
 
 router.post('/write', function(req,res,next){
@@ -49,7 +62,14 @@ router.get('/read/:idx', function(req,res,next){
     "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate,hit from board where idx=?";
     board.query(sql,[idx], function(err,row){
         if(err) console.error(err)
-        res.render('read.ejs', {title:"글 상세", row:row[0]})
+
+        var id = req.user;
+        if(!id) res.redirect('/board/list')
+        else{
+            var id = req.user.ID;
+            var nickname = req.user.nickname;
+            res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"글 상세", row:row[0]})
+        }
     })
 })
 

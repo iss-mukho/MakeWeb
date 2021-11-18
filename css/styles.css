@@ -327,6 +327,8 @@ th {
   border-color: inherit;
   border-style: solid;
   border-width: 0;
+  border: 1px solid #444444;
+  padding: 2px;
 }
 
 label {
@@ -1969,8 +1971,10 @@ progress {
   margin-bottom: 1rem;
   color: #212529;
   vertical-align: top;
+  border: 1px solid #444444;
   border-color: #dee2e6;
 }
+
 .table > :not(caption) > * > * {
   padding: 0.5rem 0.5rem;
   background-color: var(--bs-table-bg);
