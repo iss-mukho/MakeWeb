@@ -8,15 +8,13 @@ var path = require('path') // 상대경로
 var mysql_odbc = require('../../db/db_board')();
 var board = mysql_odbc.init();
 
-
 router.get('/list/:page', function(req, res, next) {
     var id = req.user;
     if(!id) res.redirect('/board/list/1')
     else{
         var page = req.params.page;
-        var sql = "select idx, name, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
-        "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit from board";
-    
+        var sql = "select idx, nickname, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
+        "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit from board order by idx desc";
         board.query(sql, function(err,rows) {
             if (err) console.error("err : " + err);
             var id = req.user.ID;
@@ -45,20 +43,15 @@ router.get('/write', function(req,res,next){
 })
 
 router.post('/write', function(req,res,next){
-    var name = req.body.name
+    var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
     var content = req.body.content
-    var passwd = req.body.passwd
-    var datas = [name,title,content,passwd]
+    var ID = req.user.ID
+    var datas = [nickname, title, content, ID]
 
-    var id;
-    var nickname;
-    var sql = "insert into board(name, title, content, regdate, modidate, passwd, hit) values(?,?,?,now(),now(),?,0)";
-    board.query(sql,datas, function (err, rows) {
+    var sql = "insert into board(nickname, title, content, regdate, modidate, hit, ID) values(?,?,?,now(),now(),0, ?)";
+    board.query(sql, datas, function (err, rows) {
         if (err) console.error("err : " + err);
-
-        id = req.user.ID;
-        nickname = req.user.nickname;
     });
 
     var idx_;
@@ -67,6 +60,9 @@ router.post('/write', function(req,res,next){
         if(err) console.error("err : " + err);
         idx_ = rows[0].idx;
 
+        if(!idx_) // 글이 없으면 NULL
+            idx_ = 1;
+
         console.log(req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
         res.redirect('/board/read/'+idx_);
     });
@@ -74,9 +70,9 @@ router.post('/write', function(req,res,next){
 
 router.get('/read/:idx', function(req,res,next){
     var idx = req.params.idx
-    var sql = "select idx, name, title, content, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
-    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit from board where idx=?";
-    board.query(sql,[idx], function(err,row){
+    var sql = "select idx, nickname, title, content, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
+    "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit, ID from board where idx=?";
+    board.query(sql, [idx], function(err,row){
         if(err) console.error(err)
 
         var id = req.user;
@@ -98,18 +94,17 @@ router.get('/read/:idx', function(req,res,next){
 })
 
 router.post('/update', function(req,res,next){
+    var ID = req.user.ID;
     var idx = req.body.idx
-    var name = req.body.name
     var title = req.body.title
     var content = req.body.content
-    var passwd = req.body.passwd
-    var datas = [name, title, content, idx, passwd]
+    var datas = [title, content, idx, ID]
 
-    var sql = "update board set name = ?,title=?,content=?,modidate=now() where idx =? and passwd=?"
+    var sql = "update board set title=?,content=?,modidate=now() where idx =? and ID=?"
     board.query(sql,datas,function(err,result){
         if(err) console.error(err)
         if(result.affectedRows==0){
-            res.send("<script>alert('패스워드가 일치하지 않습니다.');history.back();</script>")
+            res.send("<script>alert('게시글 작성자가 아닙니다.');history.back();</script>")
         }
         else{
             var id = req.user.ID;
@@ -122,22 +117,40 @@ router.post('/update', function(req,res,next){
 
 router.post('/delete', function(req,res,next){
     var idx = req.body.idx
-    var passwd = req.body.passwd
-    var datas = [idx,passwd]
+    var ID = req.user.ID;
+    var datas = [idx,ID]
 
-    var sql = "delete from board where idx=? and passwd=?"
-
+    var sql = "delete from board where idx=? and ID=?"
     board.query(sql,datas, function(err,result){
         if(err) console.error(err)
+
+        // 삭제를 요청한 사용자가 작성자가 아닌 경우
         if(result.affectedRows == 0){
-            res.send("<script>alert('패스워드가 일치하지 않습니다.');history.back();</script>");
+            // 운영자세요?
+            var sql_ = 'select type from userdb where ID="'+ID+'"';
+            board.query(sql_, function(err_, result_){
+                if(err_) console.error(err_)
+
+                if(result_[0].type == "운영자"){ // 작성자는 아니나 유저 타입이 운영자인 경우
+                    var sqlAdmin = 'delete from board where idx="'+idx+'"';
+                    board.query(sqlAdmin, function(err__, result__){
+                        if(err__) console.error(err__)
+                        
+                        var nickname = req.user.nickname;
+                        res.send("<script>alert('게시글이 운영자에 의해 삭제되었습니다.');window.location.href='/board/list/';</script>");
+                        console.log("[Admin] "+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
+                    })
+                }
+                else{ // 작성자도, 운영자도 아니면
+                    res.send("<script>alert('게시글 작성자가 아닙니다');history.back();</script>");
+                }
+            })
         }
-        else
-        {
+        else{ // 작성자인 경우
             var id = req.user.ID;
             var nickname = req.user.nickname;
+            res.send("<script>alert('게시글이 삭제되었습니다.');window.location.href='/board/list/';</script>");
             console.log(req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
-            res.redirect('/board/list/');
         }
     })
 })

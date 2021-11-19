@@ -43,7 +43,7 @@
                 <input type="hidden" name="idx" value="<%=row.idx%>"/>
                 <tr>
                     <td>작성자</td>
-                    <td><input type="text" name="name" id="name" value="<%=row.name%>" required/></td>
+                    <td><%=nickname%></td>
                 </tr>
                 <tr>
                     <td>제목</td>
@@ -52,10 +52,6 @@
                 <tr>
                     <td>내용</td>
                     <td><textarea name="content" id="content" cols="30" rows="10" required><%=row.content%></textarea></td>
-                </tr>
-                <tr>
-                    <td>패스워드</td>
-                    <td><input type="password" name="passwd" id="passwd" required/></td>
                 </tr>
                 <tr>
                     <td>변경일</td>
