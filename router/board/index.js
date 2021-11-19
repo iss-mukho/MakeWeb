@@ -51,21 +51,23 @@ router.post('/write', function(req,res,next){
     var passwd = req.body.passwd
     var datas = [name,title,content,passwd]
 
-    var idx_;
-    var sql_ = "select max(idx) as idx from board"
-    board.query(sql_, function(err, rows){
-        if(err) console.error("err : " + err);
-        idx_ = rows[0].idx+1;
-    });
-
+    var id;
+    var nickname;
     var sql = "insert into board(name, title, content, regdate, modidate, passwd, hit) values(?,?,?,now(),now(),?,0)";
     board.query(sql,datas, function (err, rows) {
         if (err) console.error("err : " + err);
 
-        var id = req.user.ID;
-        var nickname = req.user.nickname;
-        console.log(req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
+        id = req.user.ID;
+        nickname = req.user.nickname;
+    });
 
+    var idx_;
+    var sql_ = "select max(idx) as idx from board"
+    board.query(sql_, function(err, rows){
+        if(err) console.error("err : " + err);
+        idx_ = rows[0].idx;
+
+        console.log(req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
         res.redirect('/board/read/'+idx_);
     });
 })

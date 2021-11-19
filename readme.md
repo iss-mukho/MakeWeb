@@ -50,6 +50,6 @@ DB구조 - board에서 사용됨(*idx, name, title, content, regdate, modidate, 
 
 LF 오류시 git config --global core.autocrlf true 입력<br><br>
 
-최종 수정: 2021-11-19 11:11<br>
+최종 수정: 2021-11-19 16:28<br>
 최종 수정 내용: 버그 수정, 게시글 조회수 구현, 프로필 수정 세션 연동, about/사이트 git 링크 추가, 프로필 추가<br>
 수정 내용: 메뉴바/하단 추가, 게시판에 기본 서식 추가, 로그인시에만 게시판 관련 경로에 접근가능하게 함, 사용자 로그 생성, 경로 지정 수정, 제목 추가, userDB, 회원가입에 nickname요소 추가, 세션에 ID + 닉네임 전달기능 추가, 게시판의 글쓰기 및 글 열람 기능 추가.
