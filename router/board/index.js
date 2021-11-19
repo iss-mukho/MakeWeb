@@ -41,7 +41,7 @@ router.get('/list/:page', function(req, res, next) {
             if (err) console.error("err : " + err);
             var id = req.user.ID;
             var nickname = req.user.nickname;
-            console.log(logString+req.user.ID+'('+nickname+') 유저가 게시판을 보고 있습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 게시판을 보고있습니다.')
             res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows, page:page, length:rows.length-1,page_num:10,pass:true})
         })
     }
