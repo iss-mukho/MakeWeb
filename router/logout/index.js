@@ -4,14 +4,23 @@ var router = express.Router();
 var path = require('path')
 
 // 로그용
-var today = new Date();
-var year = today.getFullYear();
-var month = ('0' + (today.getMonth()+1)).slice(-2);
-var day = ('0' + today.getDate()).slice(-2);
-var hour = ('0' + today.getHours()).slice(-2);
-var minute = ('0' + today.getMinutes()).slice(-2);
-var second = ('0' + today.getSeconds()).slice(-2);
-var logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+var logString;
+function getTime(){
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth()+1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+    var hour = ('0' + today.getHours()).slice(-2);
+    var minute = ('0' + today.getMinutes()).slice(-2);
+    var second = ('0' + today.getSeconds()).slice(-2);
+    logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+}
+// 시간 갱신용
+function init(){
+    getTime();
+    setInterval(getTime, 1000)
+}
+init()
 
 router.get('/', function(req, res){
     var id = req.user;
