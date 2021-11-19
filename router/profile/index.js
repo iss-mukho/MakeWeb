@@ -41,10 +41,10 @@ passport.deserializeUser(function(user, done){
 router.get('/', function(req, res){
     try{
         var id = req.session.passport.user.ID;
-        if(!id){
-            console.log(logString+'익명 유저의 프로필 접근 시도를 거부했습니다.')
-            res.redirect('/login')
-        }
+        // if(!id){
+        //     console.log(logString+'익명 유저의 프로필 접근 시도를 거부했습니다.1')
+        //     res.redirect('/login')
+        // }
 
         var sql = "select profilemsg, type from userdb where id =?";
     
@@ -59,7 +59,7 @@ router.get('/', function(req, res){
     }
     catch{
         console.log(logString+'익명 유저의 프로필 접근 시도를 거부했습니다.')
-        res.redirect('/login')
+        res.sendFile(path.join(__dirname, "../../public/login.html"))
     }
 
 });
@@ -67,10 +67,10 @@ router.get('/', function(req, res){
 router.get('/update', function(req,res){
     try{
         var id = req.user.ID;
-        if(!id){
-            console.log(logString+'익명 유저의 프로필 수정 시도를 거부했습니다.')
-            res.redirect('/login')
-        }
+        // if(!id){
+        //     console.log(logString+'익명 유저의 프로필 수정 시도를 거부했습니다.')
+        //     res.redirect('/login')
+        // }
 
         var sql = 'select profilemsg from userdb where id ="'+req.user.ID+'"';
 
@@ -87,7 +87,7 @@ router.get('/update', function(req,res){
     catch{
         if(!id){
             console.log(logString+'익명 유저의 프로필 수정 시도를 거부했습니다.')
-            res.redirect('/login')
+            res.sendFile(path.join(__dirname, "../../public/login.html"))
         }
     }
 })
@@ -122,9 +122,9 @@ router.post('/update', function(req,res,next){
                 if(err) console.error(err)
 
                 console.log(logString+req.user.ID+'('+req.session.passport.user.nickname+') 유저가 프로필을 수정했습니다.')
-                console.log("  ▷변경전: "+id+"("+req.user.nickname+") "+oldType+" // "+oldProfilemsg)
+                console.log("  ▷ 변경전: "+id+"("+req.user.nickname+") "+oldType+" // "+oldProfilemsg)
                 req.session.passport.user.nickname = nickname;
-                console.log("  ▶변경후: "+id+"("+nickname+") "+type+" // "+profilemsg)
+                console.log("  ▶ 변경후: "+id+"("+nickname+") "+type+" // "+profilemsg)
                 res.redirect('/profile');
             })
         }

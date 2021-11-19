@@ -55,7 +55,7 @@ SET @COUNT = 0;
 UPDATE board SET idx = @COUNT:=@COUNT+1;
 입력<h2><br><br>
 
-최종 수정: 2021-11-20 01:50<br>
+최종 수정: 2021-11-20 03:46<br>
 최종 수정 내용:
 <h2>★★필수입력★★<h2>
 alter table board drop passwd;
