@@ -2,21 +2,22 @@
     host: 'localhost',<br>
     port : 3306,<br>
     user: 'root',<br>
-    password : '2016104101',<br>
-    database : 'userDB'<br>
+    password : '',<br>
+    database : 'singer_composer'<br>
 }<br><br>
 게시판 사용 DB 정보{<br>
     host: 'localhost',<br>
     port : 3306,<br>
     user: 'root',<br>
-    password : '2016104101',<br>
-    database : 'board'<br>
+    password : '',<br>
+    database : 'singer_composer'<br>
 }<br><br>
 
 sql 사용 파일<br>
     router/login/index.js<br>
     router/register/index.js<br>
-    router/board/index.js<br><br>
+    router/board/index.js<br>
+    router/profile.index.js<br><br>
 
 DB 구조(*ID, password, type) -> 형식에 맞게 추가<br>
 *ID varchar(20), password varchar(20), type varchar(10) // type이 운영자인 경우 서버에서 변경<br>
@@ -35,27 +36,24 @@ create table userdb(
 
 create table board(
     idx int not null primary key auto_increment,
-    name varchar(50) not null,
+    nickname varchar(50) not null,
     title varchar(50) not null,
     content mediumtext not null,
     regdate datetime not null,
     modidate datetime not null,
-    passwd varchar(50) not null,
-    hit int not null
+    hit int not null,
+    ID varchar(20) not null
 )engine=innodb;<br><br>
 
-DB구조 - board에서 사용됨(*idx, name, title, content, regdate, modidate, passwd, hit)<br>
-*idx int, name varchar(50), title varchar(50), content mediumtext, regdate datetime, modidate datetime, passwd varchar(50), hit int<br>
 
-
-<h2>LF 오류시 git config --global core.autocrlf true 입력<h2><br>
-<h2>게시글 reset 후 idx의 값이 1부터 시작하지 않을 경우
+<h2>LF 오류시 git config --global core.autocrlf true 입력<h2>
+<h2>게시글 reset 후 idx의 값이 1부터 시작하지 않을 경우<h2>
 ALTER TABLE board AUTO_INCREMENT = 1; 
 SET @COUNT = 0;
 UPDATE board SET idx = @COUNT:=@COUNT+1;
-입력<h2><br><br>
+입력<br><br>
 
-최종 수정: 2021-11-20 03:46<br>
+최종 수정: 2021-11-20 05:02<br>
 최종 수정 내용:
 <h2>★★필수입력★★<h2>
 alter table board drop passwd;
