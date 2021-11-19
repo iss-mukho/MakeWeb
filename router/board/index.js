@@ -64,7 +64,7 @@ router.post('/write', function(req,res,next){
 
         var id = req.user.ID;
         var nickname = req.user.nickname;
-        console.log(req.user.ID+'('+nickname+') 유저가 게시글을 작성했습니다.')
+        console.log(req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
 
         res.redirect('/board/read/'+idx_);
     });
