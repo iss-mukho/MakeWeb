@@ -37,6 +37,16 @@ app.use("/js", express.static(__dirname + "/js"));
 app.use("/chat", express.static(__dirname+ "/chat"));
 app.set('view engine', 'ejs')
 
+// 로그용
+var today = new Date();
+var year = today.getFullYear();
+var month = ('0' + (today.getMonth()+1)).slice(-2);
+var day = ('0' + today.getDate()).slice(-2);
+var hour = ('0' + today.getHours()).slice(-2);
+var minute = ('0' + today.getMinutes()).slice(-2);
+var second = ('0' + today.getSeconds()).slice(-2);
+var logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+
 app.use(session({
    secret: 'keyboard cat',
    resave: false,
@@ -83,5 +93,5 @@ io.sockets.on('connection', function(socket) {
 })
 
 server.listen(PORT, function(){
-    console.log("서버를 구동합니다.(Port: "+PORT+")");
+    console.log(logString+"서버가 시작되었습니다.(Port: "+PORT+")");
 });

@@ -8,9 +8,22 @@ var path = require('path') // 상대경로
 var mysql_odbc = require('../../db/db_board')();
 var board = mysql_odbc.init();
 
+// 로그용
+var today = new Date();
+var year = today.getFullYear();
+var month = ('0' + (today.getMonth()+1)).slice(-2);
+var day = ('0' + today.getDate()).slice(-2);
+var hour = ('0' + today.getHours()).slice(-2);
+var minute = ('0' + today.getMinutes()).slice(-2);
+var second = ('0' + today.getSeconds()).slice(-2);
+var logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+
 router.get('/list/:page', function(req, res, next) {
     var id = req.user;
-    if(!id) res.redirect('/board/list/1')
+    if(!id){
+        console.log(logString+'익명 유저의 게시판 접근을 거부했습니다.')
+        res.redirect('/board/list/1')
+    }
     else{
         var page = req.params.page;
         var sql = "select idx, nickname, title, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
@@ -19,7 +32,7 @@ router.get('/list/:page', function(req, res, next) {
             if (err) console.error("err : " + err);
             var id = req.user.ID;
             var nickname = req.user.nickname;
-            console.log(req.user.ID+'('+nickname+') 유저가 게시판을 보고 있습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 게시판을 보고 있습니다.')
             res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '게시판 리스트', rows: rows, page:page, length:rows.length-1,page_num:10,pass:true})
         })
     }
@@ -27,17 +40,23 @@ router.get('/list/:page', function(req, res, next) {
 
 router.get('/list', function(req,res,next){
     var id = req.user;
-    if(!id) res.sendFile(path.join(__dirname, "../../public/login.html"))
+    if(!id){
+        console.log(logString+'익명 유저의 게시판 접근을 거부했습니다.')
+        res.sendFile(path.join(__dirname, "../../public/login.html"))
+    }
     else res.redirect('/board/list/1')
 })
 
 router.get('/write', function(req,res,next){
     var id = req.user;
-    if(!id) res.sendFile(path.join(__dirname, "../../public/login.html"))
+    if(!id){
+        console.log(logString+'익명 유저의 글쓰기 시도를 거부했습니다.')
+        res.sendFile(path.join(__dirname, "../../public/login.html"))
+    }
     else{
         var id = req.user.ID;
         var nickname = req.user.nickname;
-        console.log(req.user.ID+'('+nickname+') 유저가 게시글 작성 중입니다.')
+        console.log(logString+req.user.ID+'('+nickname+') 유저가 게시글 작성 중입니다.')
         res.render('write.ejs', {'ID':id, 'nickname': nickname, title:"게시판 글 쓰기"})
     }
 })
@@ -63,7 +82,7 @@ router.post('/write', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
-        console.log(req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
+        console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx_+'번 게시글을 작성했습니다.')
         res.redirect('/board/read/'+idx_);
     });
 })
@@ -76,7 +95,10 @@ router.get('/read/:idx', function(req,res,next){
         if(err) console.error(err)
 
         var id = req.user;
-        if(!id) res.redirect('/board/list')
+        if(!id){
+            console.log(logString+'익명 유저의 '+idx+'번 게시물 접근을 거부했습니다.')
+            res.redirect('/login')
+        }
         else{
             var id = req.user.ID;
             var nickname = req.user.nickname;
@@ -87,7 +109,7 @@ router.get('/read/:idx', function(req,res,next){
                 if(err) console.error(err)
             })
 
-            console.log(req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 보고 있습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 보고있습니다.')
             res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"글 상세", row:row[0]})
         }
     })
@@ -104,12 +126,13 @@ router.post('/update', function(req,res,next){
     board.query(sql,datas,function(err,result){
         if(err) console.error(err)
         if(result.affectedRows==0){
+            console.log(logString+req.user.ID+'('+nickname+') 유저의 '+idx+'번 게시글 수정을 거부했습니다.(권한없음)')
             res.send("<script>alert('게시글 작성자가 아닙니다.');history.back();</script>")
         }
         else{
             var id = req.user.ID;
             var nickname = req.user.nickname;
-            console.log(req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 수정했습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 수정했습니다.')
             res.redirect('/board/read/'+idx)
         }
     })
@@ -138,10 +161,12 @@ router.post('/delete', function(req,res,next){
                         
                         var nickname = req.user.nickname;
                         res.send("<script>alert('게시글이 운영자에 의해 삭제되었습니다.');window.location.href='/board/list/';</script>");
-                        console.log("[Admin] "+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
+                        console.log(logString+"[Admin] "+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
                     })
                 }
                 else{ // 작성자도, 운영자도 아니면
+                    var nickname = req.user.nickname;
+                    console.log(logString+req.user.ID+'('+nickname+') 유저의 '+idx+'번 게시글 삭제를 거부했습니다.(권한없음)')
                     res.send("<script>alert('게시글 작성자가 아닙니다');history.back();</script>");
                 }
             })
@@ -150,7 +175,7 @@ router.post('/delete', function(req,res,next){
             var id = req.user.ID;
             var nickname = req.user.nickname;
             res.send("<script>alert('게시글이 삭제되었습니다.');window.location.href='/board/list/';</script>");
-            console.log(req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 삭제했습니다.')
         }
     })
 })
