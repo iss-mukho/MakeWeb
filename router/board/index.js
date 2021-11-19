@@ -62,7 +62,6 @@ router.post('/write', function(req,res,next){
     board.query(sql,datas, function (err, rows) {
         if (err) console.error("err : " + err);
 
-        console.log(idx_)
         var id = req.user.ID;
         var nickname = req.user.nickname;
         console.log(req.user.ID+'('+nickname+') 유저가 게시글을 작성했습니다.')
