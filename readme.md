@@ -55,12 +55,12 @@ create table board(
 >git config --global core.autocrlf true
 
 - 게시글 reset 후 idx의 값이 1부터 시작하지 않을 경우 하단의 SQL문 입력
->ALTER TABLE board AUTO_INCREMENT = 1;
->SET @COUNT = 0;
+>ALTER TABLE board AUTO_INCREMENT = 1;<br>
+>SET @COUNT = 0;<br>
 >UPDATE board SET idx = @COUNT:=@COUNT+1;
 
 ---
-### 최종 수정: 2021-11-20 19:14<br>
+### 최종 수정: 2021-11-20 19:16<br>
 ### 수정 내용:
 1. 최근 있었던 DB명세구조 변경
 >alter table board drop passwd;<br>
