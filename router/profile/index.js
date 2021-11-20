@@ -117,6 +117,12 @@ router.post('/update', function(req,res,next){
         if(err) console.error(err)
         // 변경하려는 닉네임이 중복이 아닌 경우 or 닉네임 변경이 없는 수정
         if(!result.length || (result.length && req.user.ID == result[0].ID)){
+            // 운영자인 경우 타입을 변경시키지 않고 고정
+            if(oldType == '운영자'){
+                type = '운영자'
+                datas[2] = '운영자';
+            }
+            
             var sql = "update userdb set profilemsg =?, nickname=?, type=? where id =?"
             myinfo.query(sql,datas,function(err,result){
                 if(err) console.error(err)

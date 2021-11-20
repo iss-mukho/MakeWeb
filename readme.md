@@ -60,7 +60,7 @@ create table board(
 >UPDATE board SET idx = @COUNT:=@COUNT+1;
 
 ---
-### 최종 수정: 2021-11-20 19:16<br>
+### 최종 수정: 2021-11-20 21:44<br>
 ### 수정 내용:
 1. 최근 있었던 DB명세구조 변경
 >alter table board drop passwd;<br>
