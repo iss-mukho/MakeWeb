@@ -1,29 +1,30 @@
-사용 DB 정보{<br>
-    host: 'localhost',<br>
-    port : 3306,<br>
-    user: 'root',<br>
-    password : '',<br>
-    database : 'singer_composer'<br>
-}<br><br>
-게시판 사용 DB 정보{<br>
-    host: 'localhost',<br>
-    port : 3306,<br>
-    user: 'root',<br>
-    password : '',<br>
-    database : 'singer_composer'<br>
-}<br><br>
+# Singer-Composer Website Project
++ Developer
+    - **고승완**(Mukho)
+    - **배승호**(승호 D. 배)
+    - **최시원**(Rubyflyer)
++ Git Address: http://khuhub.khu.ac.kr/2017104034/Singer-Composer
 
+---
+## 사용 DB 정보
+```
+{
+    host: 'localhost',
+    port : 3306,
+    user: 'root',
+    password : '',
+    database : 'singer_composer'
+}
+```
 sql 사용 파일<br>
-    router/login/index.js<br>
-    router/register/index.js<br>
-    router/board/index.js<br>
-    router/profile.index.js<br><br>
+>router/login/index.js<br>
+>router/register/index.js<br>
+>router/board/index.js<br>
+>router/profile.index.js
 
-DB 구조(*ID, password, type) -> 형식에 맞게 추가<br>
-*ID varchar(20), password varchar(20), type varchar(10) // type이 운영자인 경우 서버에서 변경<br>
-추가된 형식에 맞는 로그인 및 세션 등 변경<br>
-alter table userDB add nickname varchar(20) not null;<br>
-
+---
+## Database 명세
+```
 Database = singer_composer
 
 create table userdb(
@@ -43,25 +44,35 @@ create table board(
     modidate datetime not null,
     hit int not null,
     ID varchar(20) not null
-)engine=innodb;<br><br>
+)engine=innodb;
+```
 
+---
+## 주의 및 안내사항
 
-<h2>LF 오류시 git config --global core.autocrlf true 입력<h2>
-<h2>게시글 reset 후 idx의 값이 1부터 시작하지 않을 경우<h2>
-ALTER TABLE board AUTO_INCREMENT = 1; 
-SET @COUNT = 0;
-UPDATE board SET idx = @COUNT:=@COUNT+1;
-입력<br><br>
+- type이 운영자인 경우 서버에서 변경
+- LF 오류시 Git에 하단 명령어 입력
+>git config --global core.autocrlf true
 
-최종 수정: 2021-11-20 17:04<br>
-최종 수정 내용:
-<h2>★★필수입력★★<h2>
-alter table board drop passwd;
-alter table board add ID varchar(20) not null;
-alter table board change name nickname;
-alter table board modify nickname varchar(20);
+- 게시글 reset 후 idx의 값이 1부터 시작하지 않을 경우 하단의 SQL문 입력
+>ALTER TABLE board AUTO_INCREMENT = 1;
+>SET @COUNT = 0;
+>UPDATE board SET idx = @COUNT:=@COUNT+1;
 
-로그에 시간 추가, 시간 실시간 반영, 게시글 수정 및 삭제 세션+권한 연동/DB수정, 버그 수정, 게시글 조회수 구현, 프로필 수정 세션 연동<br>
-수정 내용: about/사이트 git 링크 추가, 프로필 추가, 메뉴바/하단 추가, 게시판에 기본 서식 추가, 로그인시에만 게시판 관련 경로에 접근가능하게 함, 사용자 로그 생성, 경로 지정 수정, 제목 추가, userDB, 회원가입에 nickname요소 추가, 세션에 ID + 닉네임 전달기능 추가, 게시판의 글쓰기 및 글 열람 기능 추가.
+---
+### 최종 수정: 2021-11-20 19:12<br>
+### 수정 내용:
+1. 최근 있었던 DB명세구조 변경
+>alter table board drop passwd;<br>
+>alter table board add ID varchar(20) not null;<br>
+>alter table board change name nickname;<br>
+>alter table board modify nickname varchar(20);
 
-<!-- http://khuhub.khu.ac.kr/2017104034/Singer-Composer -->
+2. 로그에 시간 추가
+3. 시간 실시간 반영
+4. 게시글 수정 및 삭제 세션+권한 연동/DB수정
+5. 버그 수정
+6. 게시글 조회수 구현
+7. 프로필 수정 세션 연동
+8. etc
+
