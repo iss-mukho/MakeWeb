@@ -60,14 +60,10 @@ create table board(
 >UPDATE board SET idx = @COUNT:=@COUNT+1;
 
 ---
-### 최종 수정: 2021-11-20 21:44<br>
+### 최종 수정: 2021-11-23 01:48<br>
 ### 수정 내용:
-1. 최근 있었던 DB명세구조 변경
->alter table board drop passwd;<br>
->alter table board add ID varchar(20) not null;<br>
->alter table board change name nickname;<br>
->alter table board modify nickname varchar(20);
-
+0. 채팅기능에 버그가 있는 것 같음-피드백 바람(undefined님이 나가셨습니다. -> 콘솔에 계속 출력됨)
+1. 일부 수정
 2. 로그에 시간 추가
 3. 시간 실시간 반영
 4. 게시글 수정 및 삭제 세션+권한 연동/DB수정
@@ -75,4 +71,3 @@ create table board(
 6. 게시글 조회수 구현
 7. 프로필 수정 세션 연동
 8. etc
-

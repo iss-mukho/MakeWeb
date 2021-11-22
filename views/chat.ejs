@@ -1,12 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>묵호 - 놀이터</title>
+    <link rel="stylesheet" href="/css/chat.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js"></script>
+    <link href="../css/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light static-top">
+        <div class="container">
+            <a class="navbar-brand" href="/main">묵호의 놀이터</a>
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/about" class="nav-link px-2 link-dark">About</a></li>
+                <li><a href="/board/list" class="nav-link px-2 link-dark">게시판</a></li>
+                <li><a href="/chat" class="nav-link px-2 link-dark">채팅</a></li>
+                <li><a href="http://khuhub.khu.ac.kr/2017104034/Singer-Composer" target="_blank" class="nav-link px-2 link-dark">사이트 git</a></li>
+            </ul>
+            <div class="user">
+                <a href = "/profile"> <%=nickname%></a><a>님 안녕하세요</a>
+                <a class="btn btn-primary" href="/logout">로그아웃</a>
+            </div>
+        </div>
+    </nav>
+    <div id="main">
+      <div id="chat">
+        <!-- 채팅 메시지 영역 -->
+      </div>
+      <div>
+        <input type="text" id="test" placeholder="메시지를 입력해주세요..">
+        <button onclick="send()">전송</button>
+      </div>
+    </div>
+    <footer class="footer bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
+                    <ul class="list-inline mb-2">
+                        <li class="list-inline-item"><a href="/about">About</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://khuhub.khu.ac.kr/2017104034/Singer-Composer" target="_blank">사이트 git</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://ce.khu.ac.kr/">경희대학교 컴퓨터공학과</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://geo.khu.ac.kr/">경희대학교 지리학과</a></li>
+                    </ul>
+                    <p class="text-muted small mb-4 mb-lg-0">&copy; Mukho 2021. All Rights Reserved.</p>
+                </div>
+                <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item me-4">
+                            <a href="#!"><i class="bi-facebook fs-3"></i></a>
+                        </li>
+                        <li class="list-inline-item me-4">
+                            <a href="#!"><i class="bi-twitter fs-3"></i></a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!"><i class="bi-instagram fs-3"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+  </body>
 </html>

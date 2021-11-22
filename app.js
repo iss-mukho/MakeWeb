@@ -38,20 +38,46 @@ app.use("/chat", express.static(__dirname+ "/chat"));
 app.set('view engine', 'ejs')
 
 // 로그용
-var today = new Date();
-var year = today.getFullYear();
-var month = ('0' + (today.getMonth()+1)).slice(-2);
-var day = ('0' + today.getDate()).slice(-2);
-var hour = ('0' + today.getHours()).slice(-2);
-var minute = ('0' + today.getMinutes()).slice(-2);
-var second = ('0' + today.getSeconds()).slice(-2);
-var logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+var logString;
+function getTime(){
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth()+1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+    var hour = ('0' + today.getHours()).slice(-2);
+    var minute = ('0' + today.getMinutes()).slice(-2);
+    var second = ('0' + today.getSeconds()).slice(-2);
+    logString = '['+year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second+'] ';
+}
+// 시간 갱신용
+function init(){
+    getTime();
+    setInterval(getTime, 1000)
+}
+init()
 
 app.use(session({
    secret: 'keyboard cat',
    resave: false,
    saveUninitialized: true
 }))
+
+const sessionMiddleware = session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}); // 세션 미들웨어
+
+app.use(sessionMiddleware);
+
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, {}, next);
+    // sessionMiddleware(socket.request, socket.request.res, next); will not work with websocket-only
+    // connections, as 'socket.request.res' will be undefined in that case
+  });
+  
+
+io.on('connection', (socket) => {
+    const session = socket.request.session;
+    session.connections++;
+    session.save();
+  });
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -61,9 +87,13 @@ app.use(router) // router 정의
 // Socket.io
 io.sockets.on('connection', function(socket) {
 
+    const session = socket.request.session;
+    session.connections++;
+    session.save();
+    
     /* 새로운 유저가 접속했을 경우 다른 소켓에게도 알려줌 */
     socket.on('newUser', function(name) {
-        console.log(name + ' 님이 접속하였습니다.')
+        console.log(logString + name + ' 님이 접속하였습니다.')
   
         /* 소켓에 이름 저장해두기 */
         socket.name = name
@@ -85,7 +115,7 @@ io.sockets.on('connection', function(socket) {
   
     /* 접속 종료 */
     socket.on('disconnect', function() {
-        console.log(socket.name + '님이 나가셨습니다.')
+        console.log(logString+socket.name + '님이 나가셨습니다.')
   
         /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
         socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});

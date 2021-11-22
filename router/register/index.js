@@ -31,7 +31,7 @@ var connection = mysql.createConnection({
     port : 3306,
     user: 'root',
     password : '',
-    database : 'userdb'
+    database : 'singer_composer'
 })
 connection.connect();
 
