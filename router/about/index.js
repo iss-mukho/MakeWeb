@@ -2,6 +2,7 @@ var express = require('express')
 var app = express()
 var router = express.Router();
 var path = require('path') // 상대경로
+var requestIp = require('request-ip');
 
 // 로그용
 var logString;
@@ -24,14 +25,15 @@ init()
 
 // main page는 login이 된 상태(세션정보가 있을때만) 접근이 가능하게 하자 -> info에 구현해놓음.
 router.get('/', function(req, res){
+    var ip = requestIp.getClientIp(req);
     var id = req.user;
     if(!id){
-        console.log(logString+'익명의 유저가 about 페이지에서 작업 중입니다.')
+        console.log(logString+'익명의 유저가 about 페이지에서 작업 중입니다.('+ip+')')
         res.sendFile(path.join(__dirname, "../../public/about.html"))
     }
     if(id){
         var nickname = req.user.nickname;
-        console.log(logString+req.user.ID+'('+nickname+') 유저가 about 페이지에서 작업 중입니다.')
+        console.log(logString+req.user.ID+'('+nickname+') 유저가 about 페이지에서 작업 중입니다.('+ip+')')
         res.render('about.ejs', {'ID': id, 'nickname': nickname});
     }
 });

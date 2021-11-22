@@ -4,6 +4,7 @@ var router = express.Router();
 var path = require('path') // 상대경로
 var mysql_odbc = require('../../db/db_board')();
 var myinfo = mysql_odbc.init();
+var requestIp = require('request-ip');
 
 // 로그용
 var logString;
@@ -25,14 +26,15 @@ function init(){
 init()
 
 router.get('/', function(req, res){
+    var ip = requestIp.getClientIp(req);
     var id = req.user;
     if(!id){
-        console.log(logString+'익명 유저의 채팅 접근을 거부했습니다.')
+        console.log(logString+'익명 유저의 채팅 접근을 거부했습니다.('+ip+')')
         res.sendFile(path.join(__dirname, "../../public/login.html"))
     }
     if(id){
         var nickname = req.user.nickname
-        console.log(logString+req.user.ID+'('+nickname+') 유저가 채팅 중입니다.')
+        console.log(logString+req.user.ID+'('+nickname+') 유저가 채팅 중입니다.('+ip+')')
         res.render('chat.ejs', {'nickname':nickname})
     }
 });

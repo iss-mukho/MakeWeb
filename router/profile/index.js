@@ -6,6 +6,7 @@ var mysql_odbc = require('../../db/db_board')();
 var myinfo = mysql_odbc.init();
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
+var requestIp = require('request-ip');
 
 // 로그용
 var logString;
@@ -39,6 +40,7 @@ passport.deserializeUser(function(user, done){
 
 // main page는 login이 된 상태(세션정보가 있을때만) 접근이 가능하게 하자 -> info에 구현해놓음.
 router.get('/', function(req, res){
+    var ip = requestIp.getClientIp(req);
     try{
         var id = req.session.passport.user.ID;
         // if(!id){
@@ -53,18 +55,19 @@ router.get('/', function(req, res){
             var nickname = req.user.nickname;
             var type = rows[0].type;
             var profilemsg = rows[0].profilemsg;
-            console.log(logString+req.user.ID+'('+nickname+') 유저가 프로필을 보고있습니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 프로필을 보고있습니다.('+ip+')')
             res.render('profile.ejs', {'ID':id, 'nickname': nickname, 'type': type, 'profilemsg': profilemsg})
         })
     }
     catch{
-        console.log(logString+'익명 유저의 프로필 접근 시도를 거부했습니다.')
+        console.log(logString+'익명 유저의 프로필 접근 시도를 거부했습니다.('+ip+')')
         res.sendFile(path.join(__dirname, "../../public/login.html"))
     }
 
 });
 
 router.get('/update', function(req,res){
+    var ip = requestIp.getClientIp(req);
     try{
         var id = req.user.ID;
         // if(!id){
@@ -80,19 +83,20 @@ router.get('/update', function(req,res){
             var nickname = req.user.nickname;
             var type = req.user.type;
             var profilemsg = rows[0].profilemsg;
-            console.log(logString+req.user.ID+'('+nickname+') 유저가 프로필 수정 중입니다.')
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 프로필 수정 중입니다.('+ip+')')
             res.render('profmsgedit.ejs', {'ID':id, 'nickname': nickname, 'type':type, 'profilemsg': profilemsg, 'message':''});
         })
     }
     catch{
         if(!id){
-            console.log(logString+'익명 유저의 프로필 수정 시도를 거부했습니다.')
+            console.log(logString+'익명 유저의 프로필 수정 시도를 거부했습니다.('+ip+')')
             res.sendFile(path.join(__dirname, "../../public/login.html"))
         }
     }
 })
 
 router.post('/update', function(req,res,next){
+    var ip = requestIp.getClientIp(req);
     var id = req.user.ID;
     var profilemsg = req.body.profilemsg;
     var nickname = req.body.nickname;
@@ -127,7 +131,7 @@ router.post('/update', function(req,res,next){
             myinfo.query(sql,datas,function(err,result){
                 if(err) console.error(err)
 
-                console.log(logString+req.user.ID+'('+req.session.passport.user.nickname+') 유저가 프로필을 수정했습니다.')
+                console.log(logString+req.user.ID+'('+req.session.passport.user.nickname+') 유저가 프로필을 수정했습니다.('+ip+')')
                 console.log("  ▷ 변경전: "+id+"("+req.user.nickname+") "+oldType+" // "+oldProfilemsg)
                 req.session.passport.user.nickname = nickname;
                 console.log("  ▶ 변경후: "+id+"("+nickname+") "+type+" // "+profilemsg)
@@ -135,7 +139,7 @@ router.post('/update', function(req,res,next){
             })
         }
         else{ // 다른 유저의 닉네임과 중복되는 경우
-            console.log(logString+id+" 유저가 중복된 닉네임으로 변경을 시도했습니다.(시도한 닉네임: "+req.body.nickname+")")
+            console.log(logString+id+" 유저가 중복된 닉네임으로 변경을 시도했습니다.(시도한 닉네임: "+req.body.nickname+" // ("+ip+')')
             res.render('profmsgedit.ejs', {nickname: req.session.passport.user.nickname, profilemsg: oldProfilemsg, message : '중복된 닉네임입니다.'})
         }
     })

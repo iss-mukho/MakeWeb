@@ -5,6 +5,7 @@ var path = require('path') // 상대경로
 var mysql = require('mysql')
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
+var requestIp = require('request-ip');
 
 // 로그용
 var logString;
@@ -39,7 +40,8 @@ router.get('/', function(req, res){
     var msg;
     var errMsg = req.flash('error')
     if(errMsg) msg = errMsg;
-    console.log(logString+'익명의 유저가 로그인 중입니다.')
+    var ip = requestIp.getClientIp(req);
+    console.log(logString+'익명의 유저가 로그인 중입니다.('+ip+')')
     res.render('login.ejs', {'message' : msg});
 })
 
@@ -62,18 +64,19 @@ passport.use('local-login', new LocalStrategy({
             var query = connection.query('select * from userDB where ID=?', [ID], function(err, rows){
             if(err) return done(err);
             
+            var ip = requestIp.getClientIp(req);
             if(rows.length){ // database에 입력한 ID값이 있는가?
                 if(password == rows[0].password){ // 비밀번호와 확인이 같은가?
-                    console.log(logString+"로그인 알림: "+ ID +"(" + rows[0].nickname + ")")
+                    console.log(logString+"로그인 알림: "+ ID +"(" + rows[0].nickname +" // "+ip+')')
                     return done(null, {'ID' : ID, 'nickname' : rows[0].nickname});
                 }
                 else{
-                    console.log(logString+"로그인 알림: 잘못된 비밀번호입니다.(시도된 아이디: "+ID+")")
+                    console.log(logString+"로그인 알림: 잘못된 비밀번호입니다.(시도된 아이디: "+ID+" // "+ip+')')
                     return done(null, false, {message : '잘못된 비밀번호입니다.'})
                 }
             }
             else{
-                console.log(logString+"로그인 알림: ID를 찾을 수 없습니다.(시도된 아이디: "+ID+")")
+                console.log(logString+"로그인 알림: ID를 찾을 수 없습니다.(시도된 아이디: "+ID+" // "+ip+')')
                 return done(null, false, {message : 'ID를 찾을 수 없습니다.'})
             }
         })
