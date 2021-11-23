@@ -123,6 +123,6 @@ io.sockets.on('connection', function(socket) {
 })
 
 // 서버 가동(IPv4 형식으로 express 설정)
-server.listen(PORT, '127.0.0.1', function(){
+server.listen(PORT, '0.0.0.0', function(){
     console.log(logString+"서버가 시작되었습니다.(Port: "+PORT+")");
 });
