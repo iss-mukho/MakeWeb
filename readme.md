@@ -33,6 +33,7 @@ create table userdb(
     type varchar(10) not null,
     nickname varchar(20) not null,
     profilemsg varchar(300)
+    profilepic varchar(300) unique
 )engine=innodb;
 
 create table board(
@@ -60,14 +61,13 @@ create table board(
 >UPDATE board SET idx = @COUNT:=@COUNT+1;
 
 ---
-### 최종 수정: 2021-11-23 20:23<br>
+### 최종 수정: 2021-11-25 20:24<br>
 ### 수정 내용:
-0. 채팅기능에 버그가 있는 것 같음-피드백 바람(undefined님이 나가셨습니다. -> 콘솔에 계속 출력됨)
-1. 로그에 IP 추가
-2. 로그에 시간 추가
-3. 시간 실시간 반영
-4. 게시글 수정 및 삭제 세션+권한 연동/DB수정
-5. 버그 수정
-6. 게시글 조회수 구현
-7. 프로필 수정 세션 연동
-8. etc
+1. 채팅 구현
+2. 시간 실시간 반영
+3. 프로필 사진 추가
+4. 프로필 검색 추가
+5. 프로필 비주얼 업데이트
+6. 채팅(socket) 사용 중 서버 재시작 시 서버 오류 해결
+7. 코드 다듬음
+8. 버그 수정

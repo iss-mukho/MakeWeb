@@ -35,16 +35,21 @@ init()
 // URL routing
 // req = request, res = respond
 router.get('/', function(req, res){
-    var ip = requestIp.getClientIp(req);
-    var id = req.user;
-    if(!id){
-        console.log(logString+'익명의 유저가 작업 중입니다.('+ip+')')
-        res.sendFile(path.join(__dirname, "../public/main.html"))
+    try{
+        var ip = requestIp.getClientIp(req);
+        var id = req.user;
+        if(!id){
+            console.log(logString+'익명의 유저가 작업 중입니다.('+ip+')')
+            res.sendFile(path.join(__dirname, "../public/main.html"))
+        }
+        if(id){
+            var nickname = req.user.nickname;
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 작업 중입니다.('+ip+')')
+            res.render('main.ejs', {'ID': id, 'nickname': nickname});
+        }
     }
-    if(id){
-        var nickname = req.user.nickname;
-        console.log(logString+req.user.ID+'('+nickname+') 유저가 작업 중입니다.('+ip+')')
-        res.render('main.ejs', {'ID': id, 'nickname': nickname});
+    catch{
+        res.redirect('/main')
     }
 });
 

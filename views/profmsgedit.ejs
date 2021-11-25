@@ -31,19 +31,38 @@
             </div>
         </div>
     </nav>
-    <div class = "wrap">
-        <form action="/profile/update" method="post">
-            <div class = "nick">닉네임</div>
-            <textarea name="nickname" id="nickname" cols="30" rows="1" required><%=nickname%></textarea>
-            <div class = "nick">상태메시지</div>
-            <textarea name="profilemsg" id="profilemsg" cols="30" rows="3" required><%=profilemsg%></textarea>
-            <select class="form-select" name="type" id="type" aria-label="사용자 유형">
-                <option value="작곡가">작곡가</option>
-                <option value="가수">가수</option>
-            </select>
-            <section class="messages" style="color:crimson;"> <%= message %> </section>
-            <button class="btn btn-primary btn-lg" id="submitButton" type="submit">수정</button>
-        </form>
+    <div id = "prof_con">
+        <div class = "column">
+            <div class = "bx_group">
+                <form action="/profile/update" method="post">
+                    <h5>닉네임</h5>
+                    <input class="form-control" name = "nickname" id="nickname" minlength='1' maxlength='20' value = "<%=nickname%>" required></input>
+                    <div class = "margingap10"></div>
+                    <h5>상태메시지</h5>
+                    <input class="form-control" name = "profilemsg" id="profilemsg" minlength='1' maxlength='22'value = "<%=profilemsg%>" required></input>
+                    <div class = "margingap10"></div>
+                    <% if (type === "운영자") { %>
+                        <h5>직종</h5>
+                        <div>운영자</div>
+                    <% }else { %>    
+                        <h5>직종</h5> 
+                        <select class="form-select" name="type" id="type" aria-label="사용자 유형">
+                            <option selected="selected">
+                                <%=type%>
+                            </option>
+                            <% if (type === "가수") { %>
+                                <option value="작곡가">작곡가</option>
+                            <% }else { %> 
+                                <option value="가수">가수</option>
+                            <% } %>
+                        </select>
+                    <% } %>
+                    <div class = "margingap10"></div>
+                    <section class="messages" style="color:crimson;"> <%= message %> </section>
+                    <button class="btn btn-primary btn-lg" id="submitButton" type="submit">수정</button>
+                </form>
+            </div>
+        </div>
     </div>
     <!-- Footer-->
     <footer class="footer bg-light">

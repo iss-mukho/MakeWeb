@@ -88,7 +88,7 @@ passport.use('local-join', new LocalStrategy({
                             var sql = {ID: ID, password: password, type:req.body.type, nickname:req.body.nickname};
                             var query = connection.query('insert into userDB set ?', sql, function(err, rows){
                                 if(err) throw err
-                                console.log(logString+"회원가입 알림: 사용자가 추가되었습니다.(" + ID +", " + req.body.nickname + " // "+ip+')')
+                                console.log(logString+"회원가입 알림: 사용자가 추가되었습니다.({" + ID +"(" + req.body.nickname + ")} // "+ip+')')
                                 return done(null, {'ID' : ID, 'nickname' : req.body.nickname});
                             })
                         }

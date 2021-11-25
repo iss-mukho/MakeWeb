@@ -56,29 +56,18 @@ function init(){
 }
 init()
 
-app.use(session({
-   secret: 'keyboard cat',
-   resave: false,
-   saveUninitialized: true
-}))
+var session = session({
+    secret:'qWeR1_3-4AsDf',
+    resave:true,
+    saveUninitialized:true,
+    cookie:{maxAge:3600000*24}
+});
 
-const sessionMiddleware = session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}); // 세션 미들웨어
+app.use(session);
 
-app.use(sessionMiddleware);
-
-io.use((socket, next) => {
-    sessionMiddleware(socket.request, {}, next);
-    // sessionMiddleware(socket.request, socket.request.res, next); will not work with websocket-only
-    // connections, as 'socket.request.res' will be undefined in that case
-  });
+var sharedsession = require("express-socket.io-session");
+io.use(sharedsession(session, { autoSave:true}));
   
-
-io.on('connection', (socket) => {
-    const session = socket.request.session;
-    session.connections++;
-    session.save();
-  });
-
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(flash())
@@ -86,39 +75,47 @@ app.use(router) // router 정의
 
 // Socket.io
 io.sockets.on('connection', function(socket) {
+    var ip = socket.handshake.address;
 
-    const session = socket.request.session;
-    session.connections++;
-    session.save();
-    
     /* 새로운 유저가 접속했을 경우 다른 소켓에게도 알려줌 */
-    socket.on('newUser', function(name) {
-        console.log(logString + name + ' 님이 접속하였습니다.')
-  
+    socket.on('newUser', function() {
         /* 소켓에 이름 저장해두기 */
-        socket.name = name
-  
-        /* 모든 소켓에게 전송 */
-        io.sockets.emit('update', {type: 'connect', name: 'SERVER', message: name + '님이 접속하였습니다.'})
+        var tempSession = socket.handshake.sessionStore.sessions;
+        var key = socket.handshake.sessionID;
+
+        // tempSession[key] = String Type
+        if(tempSession[key] != undefined){
+            var useSession = JSON.parse(tempSession[key]);
+            socket.name = useSession.passport.user.nickname
+            console.log(logString + socket.name+' 님이 접속하였습니다.('+ip+')')
+
+            /* 모든 소켓에게 전송 */
+            io.sockets.emit('update', {type: 'connect', message:socket.name + '님이 접속하였습니다.'})
+        }
     })
-  
+
     /* 전송한 메시지 받기 */
     socket.on('message', function(data) {
-        /* 받은 데이터에 누가 보냈는지 이름을 추가 */
-        data.name = socket.name
-      
-        console.log(data)
-  
-        /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
-        socket.broadcast.emit('update', data);
+        if(socket.name != undefined){
+            /* 받은 데이터에 누가 보냈는지 이름을 추가 */
+            data.name = socket.name
+
+            /* 보낸 사람을 제외한 나머지 유저에게 메시지 전송 */
+            socket.broadcast.emit('update', data);
+        }
+        else{
+            console.log(logString+'익명 유저의 채팅 전송을 거부했습니다.('+ip+')')
+            // 
+        }
     })
   
     /* 접속 종료 */
     socket.on('disconnect', function() {
-        console.log(logString+socket.name + '님이 나가셨습니다.')
-  
-        /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
+        if(socket.name != undefined){
+            console.log(logString+socket.name + ' 님이 나가셨습니다.')
+            /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
         socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});
+        }
     })
 })
 

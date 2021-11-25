@@ -1,0 +1,14 @@
+.btn_profile_edit{
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    width: 70px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    border-color: rgb(50 50 50);
+    border-width: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-style: solid;
+    color: black;
+}

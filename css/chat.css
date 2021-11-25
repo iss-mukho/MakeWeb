@@ -1,0 +1,75 @@
+/* 메인 */
+#main {
+    margin: auto;
+    margin-top: 100px;
+    border-radius: 20px;
+    background-color: #B2C7D9;
+    text-align: center;
+    width: 500px;
+    height: 800px;
+  }
+  
+  /* 채팅 영역 */
+  #chat {
+    height: 90%;
+    width: 100%;
+    padding-top: 10px;
+    overflow-y: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  #chat::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+  
+  /* 접속 알림 */
+  .connect {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 10px;
+    background-color: #A9BDCE;
+    text-align: center;
+    clear:both;
+    float:center;
+  }
+  
+  /* 접속 종료 알림 */
+  .disconnect {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 10px;
+    background-color: #A9BDCE;
+    text-align: center;
+    clear:both;
+    float:center;
+  }
+  
+  /* 내가 보낸 메시지 */
+  .me {
+    background-color: #FFEB33;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 30%;
+    margin-right: 5%;
+    padding: 3px; 
+    text-align: right;
+    clear:both;
+    float:right;
+    word-break: break-all
+  }
+  
+  /* 상대방이 보낸 메시지 */
+  .other {
+    background-color:#FFFFFF;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 5%;
+    margin-right: 30%;
+    padding: 3px; 
+    text-align: left;
+    clear:both;
+    float:left;
+  }

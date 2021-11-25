@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css?after" rel="stylesheet" />
+    <link href="/css/profile.css" rel="stylesheet" />
 </head>
 <body>
     <nav class="navbar navbar-light bg-light static-top">
@@ -32,25 +33,40 @@
         </div>
     </nav>
     <div id = "prof_con">
+        <div class = "column_pic">
+            <div class = "bx_group">
+                <a class = "bx_content" onclick= "window.open('/profile/upload','파일 업로드','width=430, height=30, location=no, status=no, scrollbars=no');">
+                    <img class="img-fluid rounded-circle mb-3" src="<%=profilepic%>" alt="..."/>
+                </a>
+            </div>
+        </div>
         <div class = "column">
             <div class = "bx_group">
-                <div class = "bx_header">
-                    <h2>내 프로필</h2>
-                </div>
                 <div class = "bx_content">
-                    <dt class = nic_tit>닉네임</dt>
-                    <dd class = nic_ele><%=nickname%></dd>
-                    <dt class = nic_tit>직종</dt>
-                    <dd class = nic_ele><%=type%></dd>
-                    <dt class = nic_tit>상태 메시지</dt>
-                    <dd class = nic_ele><%=profilemsg%></dd>
+                    <form method ="post">
+                        <h4 class = nic_tit>프로필 검색</h4>
+                        <input class = "form-control" type="text" name="search" id="search" placeholder="닉네임" required/>
+                        <input type ="hidden" name = 'profnickname' value = '<%=profnickname%>'>
+                        <input type ="hidden" name = 'type' value = '<%=type%>'>
+                        <input type ="hidden" name = 'profilemsg' value = '<%=profilemsg%>'>
+                        <input type ="hidden" name = 'profilepic' value = '<%=profilepic%>'>
+                    </form>
                 </div>
             </div>
             <div class = "bx_group">
                 <div class = "bx_header">
+                    <h4 class = "bx_header_title">프로필</h4>
+                    <div class = "bx_space"></div>
                 </div>
+
                 <div class = "bx_content">
-                    <a class="btn btn-primary" href="/profile/update">수정</a>
+                    <dt class = nic_tit>닉네임</dt>
+                    <dd name = profnickname><%=profnickname%></dd>
+                    <dt class = nic_tit>직종</dt>
+                    <dd name = type><%=type%></dd>
+                    <dt class = nic_tit>상태 메시지</dt>
+                    <dd name = profilemsg><%=profilemsg%></dd>
+                    <a class="btn_profile_edit" href="/profile/update">수정</a>
                 </div>
             </div>
 

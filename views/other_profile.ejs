@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>묵호 - 내 정보</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" type="text/css" />
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/styles.css?after" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light static-top">
+        <div class="container">
+            <a class="navbar-brand" href="/main">묵호의 놀이터</a>
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/about" class="nav-link px-2 link-dark">About</a></li>
+                <li><a href="/board/list" class="nav-link px-2 link-dark">게시판</a></li>
+                <li><a href="/chat" class="nav-link px-2 link-dark">채팅</a></li>
+                <li><a href="http://khuhub.khu.ac.kr/2017104034/Singer-Composer" target="_blank" class="nav-link px-2 link-dark">사이트 git</a></li>
+            </ul>
+            <div class="user">
+                <a href = "/profile"> <%=nickname%></a><a>님 안녕하세요</a>
+                <a class="btn btn-primary" href="/logout">로그아웃</a>
+            </div>
+        </div>
+    </nav>
+    <div id = "prof_con">
+        <div class = "column_pic">
+            <div class = "bx_group">
+                <div class = "bx_content">
+                    <img class="img-fluid rounded-circle mb-3" src="<%=profilepic%>" alt="..." />
+                </div>
+            </div>
+            <div class = "bx_group">
+                <a class="btn_profile_edit" href="/profile">내 프로필</a>
+            </div>
+        </div>
+        <div class = "column">
+            <div class = "bx_group">
+                <div class = "bx_content">
+                    <form method ="post">
+                        <dt class = nic_tit>프로필 검색</dt>
+                        <input class = "form-control" type="text" name="search" id="search" placeholder="닉네임" required/>
+                        <input type ="hidden" name = 'profnickname' value = '<%=profnickname%>'>
+                        <input type ="hidden" name = 'type' value = '<%=type%>'>
+                        <input type ="hidden" name = 'profilemsg' value = '<%=profilemsg%>'>
+                        <input type ="hidden" name = 'profilepic' value = '<%=profilepic%>'>
+                    </form>
+                    <section class="messages" style="color:crimson;"> <%= message %> </section>
+                </div>
+            </div>
+            <div class = "bx_group">
+                <div class = "bx_header">
+                    <h2>프로필</h2>
+                </div>
+                <div class = "bx_content">
+                    <dt class = nic_tit>닉네임</dt>
+                    <dd name = profnickname><%=profnickname%></dd>
+                    <dt class = nic_tit>직종</dt>
+                    <dd name = type><%=type%></dd>
+                    <dt class = nic_tit>상태 메시지</dt>
+                    <dd name = profilemsg><%=profilemsg%></dd>
+                </div>
+            </div>
+        </div> 
+    </div>
+    <!-- Footer-->
+    <footer class="footer bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
+                    <ul class="list-inline mb-2">
+                        <li class="list-inline-item"><a href="/about">About</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://khuhub.khu.ac.kr/2017104034/Singer-Composer" target="_blank">사이트 git</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://ce.khu.ac.kr/">경희대학교 컴퓨터공학과</a></li>
+                        <li class="list-inline-item">⋅</li>
+                        <li class="list-inline-item"><a href="http://geo.khu.ac.kr/">경희대학교 지리학과</a></li>
+                    </ul>
+                    <p class="text-muted small mb-4 mb-lg-0">&copy; Mukho 2021. All Rights Reserved.</p>
+                </div>
+                <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item me-4">
+                            <a href="#!"><i class="bi-facebook fs-3"></i></a>
+                        </li>
+                        <li class="list-inline-item me-4">
+                            <a href="#!"><i class="bi-twitter fs-3"></i></a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!"><i class="bi-instagram fs-3"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
