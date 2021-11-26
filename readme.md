@@ -46,6 +46,15 @@ create table board(
     hit int not null,
     ID varchar(20) not null
 )engine=innodb;
+
+create table comment(
+    idx int auto_increment primary key,
+    ID varchar(20) not null,
+    nickname varchar(50) not null,
+    comment mediumtext not null,
+    bulletin_id int not null,
+    foreign key (bulletin_id) references board(idx) on delete cascade
+    )engine=innodb;
 ```
 
 ---
@@ -61,9 +70,10 @@ create table board(
 >UPDATE board SET idx = @COUNT:=@COUNT+1;
 
 ---
-### 최종 수정: 2021-11-25 20:24<br>
+### 최종 수정: 2021-11-26 19:48<br>
 ### 수정 내용:
-1. 채팅 구현
+0. 채팅 중 서버 재시작시 기존 참여자들 리셋시키기 이슈
+1. 채팅 구현(팝업)
 2. 시간 실시간 반영
 3. 프로필 사진 추가
 4. 프로필 검색 추가
@@ -71,3 +81,4 @@ create table board(
 6. 채팅(socket) 사용 중 서버 재시작 시 서버 오류 해결
 7. 코드 다듬음
 8. 버그 수정
+9. 댓글 등록, 열람, 삭제 기능 구현 및 버그 픽스

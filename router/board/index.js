@@ -103,6 +103,7 @@ router.post('/write', function(req,res,next){
 
 router.get('/read/:idx', function(req,res,next){
     var ip = requestIp.getClientIp(req);
+
     var idx = req.params.idx
     var sql = "select idx, nickname, title, content, date_format(modidate,'%Y-%m-%d %H:%i:%s') modidate, " +
     "date_format(regdate,'%Y-%m-%d %H:%i:%s') regdate, hit, ID from board where idx=?";
@@ -124,10 +125,76 @@ router.get('/read/:idx', function(req,res,next){
                 if(err) console.error(err)
             })
 
+            var sql_comment = "select idx, nickname, comment from comment where bulletin_id =?"
+            board.query(sql_comment, [idx], function(err,comment){
+                if (err) console.error("err : " + err);
+                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+            })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시글을 보고있습니다.('+ip+')')
-            res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"글 상세", row:row[0]})
         }
     })
+})
+
+
+router.post('/read/commentwrite', function(req,res,next){
+    var ip = requestIp.getClientIp(req);
+    var idx = req.body.idx;
+    var nickname = req.user.nickname // var name = req.body.name
+    var comment = req.body.comment
+    var ID = req.user.ID
+    var datas = [ID, nickname, comment, idx]
+
+    var sql = "insert into comment(ID, nickname, comment, bulletin_id) values(?, ?, ?, ?)"
+    board.query(sql, datas, function(err,row){
+        if (err) console.error("err : " + err);
+    })
+    console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idx+'번 게시물에 댓글을 작성했습니다.('+ip+')')
+    res.redirect('/board/read/'+idx);
+})
+
+router.post('/read/commentdelete', function(req,res,next){
+    
+
+    var ip = requestIp.getClientIp(req);
+    var idx = req.body.idxcomment;
+    var idxbulletin = (req.headers.referer).split('/')[5];
+    var ID = req.user.ID;
+    var datas = [ID, idx]
+
+    var sql = "delete from comment where ID =? and idx=?"
+    board.query(sql,datas,function(err,result){
+        if(err) console.error(err)
+        // 삭제를 요청한 사용자가 작성자가 아닌 경우
+        if(result.affectedRows == 0){
+            // 운영자세요?
+            var sql_ = 'select type from userdb where ID="'+ID+'"';
+            board.query(sql_, function(err_, result_){
+                if(err_) console.error(err_)
+
+                if(result_[0].type == "운영자"){ // 작성자는 아니나 유저 타입이 운영자인 경우
+                    var sqlAdmin = 'delete from comment where idx="'+idx+'"';
+                    board.query(sqlAdmin, function(err__, result__){
+                        if(err__) console.error(err__)
+                        
+                        var nickname = req.user.nickname;
+                        console.log(logString+"[Admin] "+req.user.ID+'('+nickname+') 유저가 '+idxbulletin+'번 글에서 '+idx+'번 댓글을 삭제했습니다.('+ip+')')
+                        res.redirect('/board/read/'+idxbulletin)
+                    })
+                }
+                else{ // 작성자도, 운영자도 아니면
+                    var nickname = req.user.nickname;
+                    console.log(logString+req.user.ID+'('+nickname+') 유저의 '+idxbulletin+'번 글의 '+idx+'번 댓글 삭제를 거부했습니다.(권한없음 // '+ip+')')
+                    res.send("<script>alert('댓글 작성자가 아닙니다');history.back();</script>");
+                }
+            })
+        }
+        else{ // 작성자인 경우
+            var nickname = req.user.nickname;
+            console.log(logString+req.user.ID+'('+nickname+') 유저가 '+idxbulletin+'번 글에서 '+idx+'번 댓글을 삭제했습니다.('+ip+')')
+            res.redirect('/board/read/'+idxbulletin)
+        }
+    })
+
 })
 
 router.post('/update', function(req,res,next){
@@ -163,7 +230,6 @@ router.post('/delete', function(req,res,next){
     var sql = "delete from board where idx=? and ID=?"
     board.query(sql,datas, function(err,result){
         if(err) console.error(err)
-
         // 삭제를 요청한 사용자가 작성자가 아닌 경우
         if(result.affectedRows == 0){
             // 운영자세요?

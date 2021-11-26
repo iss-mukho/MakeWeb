@@ -26,6 +26,13 @@ var flash = require('connect-flash')
 var path = require('path')
 const PORT = 3000
 
+var jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = (new JSDOM('')).window;
+global.document = document;
+
+var $ = jQuery = require('jquery')(window);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 app.use("/public", express.static(__dirname + "/public")); // static directory
@@ -35,6 +42,7 @@ app.use("/css", express.static(__dirname + "/css"));
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/chat", express.static(__dirname+ "/chat"));
+app.use("/node_modules", express.static(path.join(__dirname+ "/node_modules")));
 app.set('view engine', 'ejs')
 
 // 로그용
@@ -66,6 +74,7 @@ var session = session({
 app.use(session);
 
 var sharedsession = require("express-socket.io-session");
+const { createSocket } = require('dgram')
 io.use(sharedsession(session, { autoSave:true}));
   
 app.use(passport.initialize())
@@ -90,7 +99,7 @@ io.sockets.on('connection', function(socket) {
             console.log(logString + socket.name+' 님이 접속하였습니다.('+ip+')')
 
             /* 모든 소켓에게 전송 */
-            io.sockets.emit('update', {type: 'connect', message:socket.name + '님이 접속하였습니다.'})
+            io.sockets.emit('update', {type: 'connect', name: 'SERVER', message:socket.name + '님이 접속하였습니다.'})
         }
     })
 
@@ -105,16 +114,16 @@ io.sockets.on('connection', function(socket) {
         }
         else{
             console.log(logString+'익명 유저의 채팅 전송을 거부했습니다.('+ip+')')
-            // 
+            //
         }
     })
-  
+
     /* 접속 종료 */
     socket.on('disconnect', function() {
         if(socket.name != undefined){
             console.log(logString+socket.name + ' 님이 나가셨습니다.')
             /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
-        socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});
+            socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});
         }
     })
 })

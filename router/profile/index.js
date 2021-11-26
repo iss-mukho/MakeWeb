@@ -18,6 +18,9 @@ var storage  = multer.diskStorage({ // 2
   });
 var upload = multer({ storage: storage });
 
+const sharp = require('sharp');
+const fs = require('fs');
+
 // 로그용
 var logString;
 function getTime(){
@@ -238,6 +241,16 @@ router.get('/upload', function(req,res){
 router.post('/upload', upload.single('userfile'), function(req,res){
     var ip = requestIp.getClientIp(req);
     try{
+        sharp(req.file.path)  // 압축할 이미지 경로
+        .resize({width:500, height:500, position:"left top"})
+        .withMetadata()	// 이미지의 exif데이터 유지
+        .toBuffer((err, buffer) => {
+          if (err) throw err;
+          // 압축된 파일 새로 저장(덮어씌우기)
+          fs.writeFile(req.file.path, buffer, (err) => {
+            if (err) throw err;
+          });
+        });
         var id = req.user.ID;
         var ip = requestIp.getClientIp(req);
         var profilepic = req.file.filename;

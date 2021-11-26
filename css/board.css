@@ -1,0 +1,30 @@
+.wrap{
+    display: flex;
+}
+.list_board{
+    display: block;
+    float: left;
+    width: 270px;
+}
+.board_btn{
+    display: block;
+    height: 50px;
+    text-align: center;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    border-style: none;
+    text-decoration: none;
+    background-color: #F8F9FA;
+    color: black;
+}
+
+.board_btn:link{
+    background-color: #F8F9FA;
+}
+.board_btn:visited{
+    background-color: #F8F9FA;
+}
+.board_btn:hover{
+    color: black;
+    background-color: #e0e0e0;
+}
