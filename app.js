@@ -42,6 +42,7 @@ app.use("/css", express.static(__dirname + "/css"));
 app.use("/assets", express.static(__dirname + "/assets"));
 app.use("/js", express.static(__dirname + "/js"));
 app.use("/chat", express.static(__dirname+ "/chat"));
+app.use("/command", express.static(__dirname+ "/command"));
 app.use("/node_modules", express.static(path.join(__dirname+ "/node_modules")));
 app.set('view engine', 'ejs')
 
@@ -83,6 +84,9 @@ app.use(flash())
 app.use(router) // router 정의
 
 // Socket.io
+
+var chatnamespace = io.of('/chatnamespace')
+
 io.sockets.on('connection', function(socket) {
     var ip = socket.handshake.address;
 
@@ -114,14 +118,15 @@ io.sockets.on('connection', function(socket) {
         }
         else{
             console.log(logString+'익명 유저의 채팅 전송을 거부했습니다.('+ip+')')
-            //
+             // 세션이 없어진 사용자들 처리
+             socket.emit('update', {type: 'ERROR'})
         }
     })
 
     /* 접속 종료 */
     socket.on('disconnect', function() {
         if(socket.name != undefined){
-            console.log(logString+socket.name + ' 님이 나가셨습니다.')
+            console.log(logString+socket.name + ' 님이 나가셨습니다.('+ip+')')
             /* 나가는 사람을 제외한 나머지 유저에게 메시지 전송 */
             socket.broadcast.emit('update', {type: 'disconnect', name: 'SERVER', message: socket.name + '님이 나가셨습니다.'});
         }

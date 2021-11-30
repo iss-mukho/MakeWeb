@@ -48,7 +48,7 @@ passport.deserializeUser(function(user, done){
     var ID = user.ID;
     var nickname = user.nickname;
     // console.log('passport session get ID: '+ ID + '(' + nickname + ')')
-    done(null, {'ID': ID, 'nickname':nickname}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
+    done(null, {'ID': ID, 'nickname':nickname, 'type': type}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
 })
 
 var searNick;

@@ -12,6 +12,7 @@ var board = require('./board/index')
 var profile = require('./profile/index')
 var about = require('./about/index')
 var chat = require('./chat/chat')
+var command = require('./command/command')
 
 // 로그용
 var logString;
@@ -62,5 +63,6 @@ router.use('/board', board)
 router.use('/profile', profile)
 router.use('/about', about)
 router.use('/chat', chat)
+router.use('/command', command)
 
 module.exports = router;

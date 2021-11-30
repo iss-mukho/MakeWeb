@@ -49,11 +49,13 @@ passport.serializeUser(function(user, done){
     console.log(logString+'passport session save: '+ user.ID + '(' + user.nickname + ')')
     done(null, user)
 });
+
 passport.deserializeUser(function(user, done){
     var ID = user.ID;
     var nickname = user.nickname;
+    var type = user.type;
     // console.log('passport session get ID: '+ ID + '(' + nickname + ')')
-    done(null, {'ID': ID, 'nickname':nickname}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
+    done(null, {'ID': ID, 'nickname':nickname, 'type': type}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
 })
 
 passport.use('local-login', new LocalStrategy({
@@ -68,7 +70,7 @@ passport.use('local-login', new LocalStrategy({
             if(rows.length){ // database에 입력한 ID값이 있는가?
                 if(password == rows[0].password){ // 비밀번호와 확인이 같은가?
                     console.log(logString+"로그인 알림: "+ ID +"(" + rows[0].nickname +" // "+ip+')')
-                    return done(null, {'ID' : ID, 'nickname' : rows[0].nickname});
+                    return done(null, {'ID' : ID, 'nickname' : rows[0].nickname, 'type': rows[0].type});
                 }
                 else{
                     console.log(logString+"로그인 알림: 잘못된 비밀번호입니다.(시도된 아이디: "+ID+" // "+ip+')')

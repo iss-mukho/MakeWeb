@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>묵호 - 게시판</title>
+        <title>묵호 - <%= title %></title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -23,7 +23,7 @@
                 <a class="navbar-brand" href="/main">묵호의 놀이터</a>
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/about" class="nav-link px-2 link-dark">About</a></li>
-                    <li><a href="/board/list" class="nav-link px-2 link-dark">게시판</a></li>
+                    <li><a href="/board" class="nav-link px-2 link-dark">게시판</a></li>
                     <li><a href = "javascript:;" onclick = "window.open('/chat','파일 업로드','width=500, height=801, toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,resizable=no');" class="nav-link px-2 link-dark">채팅</a></li>
                     <li><a href="http://khuhub.khu.ac.kr/2017104034/Singer-Composer" target="_blank" class="nav-link px-2 link-dark">사이트 git</a></li>
                 </ul>
@@ -35,25 +35,49 @@
         </nav>
         <div class ="wrap">
             <div class="list_board">
-                <a class="board_btn" href="/board/list">
+                <a class="board_btn" href="/board/list/notice">
                     공지사항
                 </a>
-                <a class="board_btn" href="/board/list">
+                <a class="board_btn" href="/board/list/composer">
                     작곡가 구인
                 </a>
-                <a class="board_btn" href="/board/list">
+                <a class="board_btn" href="/board/list/singer">
                     가수 구인
                 </a>
-                <a class="board_btn" href="/board/list">
+                <a class="board_btn" href="/board/list/free">
                     자유게시판
                 </a>
-                <a class="board_btn" href="/board/list">
+                <a class="board_btn" href="/board/list/suggestion">
                     건의사항
                 </a>
             </div>
         
             <div class="container px-5 my-5">
                 <h1><%= title %></h1>
+                <%
+                var addr;
+                %>
+                <%
+                switch(title){
+                    case '공지사항':
+                        addr = 'notice';
+                        break;
+                    case '작곡가 구인':
+                        addr = 'composer';
+                        break;
+                    case '가수 구인':
+                        addr = 'singer';
+                        break;
+                    case '자유게시판':
+                        addr = 'free';
+                        break;
+                    case '건의사항':
+                        addr = 'suggestion';
+                        break;
+                %>
+                <%
+                }
+                %>
                 <table border="1">
                     <tr>
                         <td>번호</td>
@@ -73,7 +97,7 @@
                     <tr>
                         <td><%=data.idx%></td>
                         <td><%=data.nickname%></td>
-                        <td><a href="/board/read/<%=data.idx%>"><%=data.title%></a></td>
+                        <td><a href="/board/read/<%=addr%>/<%=data.idx%>"><%=data.title%></a></td>
                         <td><%=data.hit%></td>
                         <td><%=data.modidate%></td>
                         <td><%=data.regdate%></td>
@@ -84,10 +108,9 @@
                     <tr>
                         <td colspan="6">
                             <%
-                        
                             for(var j = 0; j < rows.length/page_num ; j++){
                             %>
-                            [<a href="/board/list/<%= j + 1 %>"><%= j+1 %></a>]
+                            [<a href="/board/<%=addr%>/list/<%= j + 1 %>"><%= j+1 %></a>]
                             <%
                             }
                             %>
@@ -95,7 +118,7 @@
                     </tr>
                 </table>
                 <nav class="navbar">
-                    <a class="btn btn-outline-primary me-2" href="/board/write">글쓰기</a>
+                    <a class="btn btn-outline-primary me-2" href="/board/write/<%=addr%>">글쓰기</a>
                 </nav>
             </div>
         </div>

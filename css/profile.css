@@ -12,3 +12,14 @@
     border-style: solid;
     color: black;
 }
+
+#prof_com{
+    position: relative;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    margin-left: 15%;
+    margin-right: 15%;
+    width: 70%;
+}

@@ -1,4 +1,5 @@
-var socket = io()
+var socket = io();
+
 
 /* 접속 되었을 때 실행 */
 socket.on('connect', function() {
@@ -10,11 +11,15 @@ socket.on('connect', function() {
 
 /* 서버로부터 데이터 받은 경우 */
 socket.on('update', function(data) {
+  try{
     var chat = document.getElementById('chat')
 
     var message = document.createElement('div')
     var node;
-    if(data.name != "SERVER"){
+    if(data.name == "ERROR"){
+      throw 'ERROR'; // 서버 재시작 후 세션이 없어진 경우 throw
+    }
+    else if(data.name != "SERVER"){
         node = document.createTextNode(`${data.name}: ${data.message}`)
     }
     else{
@@ -46,10 +51,17 @@ socket.on('update', function(data) {
       element.scrollTop = element.scrollHeight - element.clientHeight;
     }
     a();
+  }
+  catch(e){ // 서버 재시작 후 세션이 사라진 경우 팝업_채팅창에서 알림창을 띄우고 팝업창 끄기->기존 창 새로고침
+    alert("세션이 만료되었습니다.")
+    self.close();
+    opener.document.location.href="/main"
+  }
 })
 
 /* 메시지 전송 함수 */
 function send() {
+
   // 입력되어있는 데이터 가져오기
   var message = document.getElementById('test').value
   

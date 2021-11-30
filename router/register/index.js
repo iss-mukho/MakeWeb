@@ -52,8 +52,9 @@ passport.serializeUser(function(user, done){
 passport.deserializeUser(function(user, done){
     var ID = user.ID;
     var nickname = user.nickname;
+    var type = user.type;
     // console.log('passport session get ID: '+ ID + '(' + nickname + ')')
-    done(null, {'ID': ID, 'nickname':nickname}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
+    done(null, {'ID': ID, 'nickname':nickname, 'type':type}); // 세션에서 값을 뽑아서 페이지에 전달하는 역할
 })
 
 passport.use('local-join', new LocalStrategy({
@@ -89,7 +90,7 @@ passport.use('local-join', new LocalStrategy({
                             var query = connection.query('insert into userDB set ?', sql, function(err, rows){
                                 if(err) throw err
                                 console.log(logString+"회원가입 알림: 사용자가 추가되었습니다.({" + ID +"(" + req.body.nickname + ")} // "+ip+')')
-                                return done(null, {'ID' : ID, 'nickname' : req.body.nickname});
+                                return done(null, {'ID' : ID, 'nickname' : req.body.nickname, 'type': req.body.type});
                             })
                         }
                     })
