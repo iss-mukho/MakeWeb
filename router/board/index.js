@@ -8,6 +8,18 @@ var path = require('path') // 상대경로
 var mysql_odbc = require('../../db/db_board')();
 var board = mysql_odbc.init();
 var requestIp = require('request-ip');
+var videojs = require('video.js')
+require('@silvermine/videojs-quality-selector')(videojs);
+var multer = require('multer');
+var storagepic  = multer.diskStorage({ // 2
+    destination(req, file, cb) {
+      cb(null, 'assets/picvid/');
+    },
+    filename(req, file, cb) {    
+        cb(null, `${Date.now()}__${file.originalname}`);
+    },
+  });
+var uploadpic = multer({ storage: storagepic });
 
 // 로그용
 var logString;
@@ -55,7 +67,7 @@ router.get('/list/notice/:page', function(req, res, next) {
             var id = req.user.ID;
             var nickname = req.user.nickname;
             console.log(logString+req.user.ID+'('+nickname+') 유저가 공지사항 게시판을 보고있습니다.('+ip+')')
-            res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '공지사항', rows: rows, page:page, length:rows.length-1,page_num:10,pass:true})
+            res.render('list.ejs', {'ID':id, 'nickname': nickname, title: '공지사항', rows: rows, page:page, length:rows.length-1, page_num:10, pass:true})
         })
     }
 });
@@ -109,7 +121,7 @@ router.get('/write/notice', function(req,res,next){
     }
 })
 
-router.post('/write/notice', function(req,res,next){
+router.post('/write/notice', uploadpic.any(), function(req,res,next){
     var ip = requestIp.getClientIp(req);
     var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
@@ -131,6 +143,31 @@ router.post('/write/notice', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
+        var piccount=0;
+        var vidcount=0;
+        for(var i=0; i<req.files.length;i++){
+            if(req.files[i].mimetype.slice(0,5) == "image"){
+                piccount += 1
+            }
+            else if(req.files[i].mimetype.slice(0,5) == "video"){
+                vidcount += 1
+            }
+        }
+        for(var i=0;i<piccount;i++){
+            var sql_picupload = "insert into picvideo(picname, bulletin_id, boardtitle) values(?,?,'notice');"
+            var picdata = [req.files.shift().filename, idx_]
+            board.query(sql_picupload, picdata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        for(var i=0;i<vidcount;i++){
+            var sql_vidupload = "insert into picvideo(vidname, bulletin_id, boardtitle) values(?,?,'notice');"
+            var viddata = [req.files.shift().filename, idx_]
+            board.query(sql_vidupload, viddata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        
         console.log(logString+req.user.ID+'('+nickname+') 유저가 공지사항 '+idx_+'번 게시글을 작성했습니다.('+ip+')')
         res.redirect('/board/read/notice/'+idx_);
     });
@@ -163,7 +200,33 @@ router.get('/read/notice/:idx', function(req,res,next){
             var sql_comment = "select idx, nickname, comment from notice_comment where bulletin_id =?"
             board.query(sql_comment, [idx], function(err,comment){
                 if (err) console.error("err : " + err);
-                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"공지사항 글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+                var sql_picvideo = "select * from picvideo where bulletin_id=? and boardtitle = 'notice'"
+                board.query(sql_picvideo, [idx], function(err, picvideos) {
+                    if (err) console.error("err : " + err);
+                    var picarr = []
+                    var vidarr = []
+                    for(var i=0; i<picvideos.length; i++){
+                        var picadd = "../../../assets/picvid/" + picvideos[i].picname;
+                        var vidadd = "../../../assets/picvid/" + picvideos[i].vidname;
+                        if(picvideos[i].picname != null){
+                            picarr.push(picadd)
+                        }
+                        if(picvideos[i].vidname != null){
+                            vidarr.push(vidadd)
+                        }
+                    }
+                    
+                    res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"공지사항 글 상세", 
+                        row:row[0], 
+                        comment:comment, 
+                        comment_length : comment.length, 
+                        usernick:req.user.nickname,
+                        picarr:picarr,
+                        picarr_length:picarr.length,
+                        vidarr:vidarr,
+                        vidarr_length:vidarr.length
+                    })
+                })
             })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 공지사항 '+idx+'번 게시글을 보고있습니다.('+ip+')')
         }
@@ -351,7 +414,7 @@ router.get('/write/composer', function(req,res,next){
     }
 })
 
-router.post('/write/composer', function(req,res,next){
+router.post('/write/composer', uploadpic.any(), function(req,res,next){
     var ip = requestIp.getClientIp(req);
     var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
@@ -373,6 +436,31 @@ router.post('/write/composer', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
+        var piccount=0;
+        var vidcount=0;
+        for(var i=0; i<req.files.length;i++){
+            if(req.files[i].mimetype.slice(0,5) == "image"){
+                piccount += 1
+            }
+            else if(req.files[i].mimetype.slice(0,5) == "video"){
+                vidcount += 1
+            }
+        }
+        for(var i=0;i<piccount;i++){
+            var sql_picupload = "insert into picvideo(picname, bulletin_id, boardtitle) values(?,?,'composer');"
+            var picdata = [req.files.shift().filename, idx_]
+            board.query(sql_picupload, picdata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        for(var i=0;i<vidcount;i++){
+            var sql_vidupload = "insert into picvideo(vidname, bulletin_id, boardtitle) values(?,?,'composer');"
+            var viddata = [req.files.shift().filename, idx_]
+            board.query(sql_vidupload, viddata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        
         console.log(logString+req.user.ID+'('+nickname+') 유저가 작곡가 구인 '+idx_+'번 게시글을 작성했습니다.('+ip+')')
         res.redirect('/board/read/composer/'+idx_);
     });
@@ -405,7 +493,33 @@ router.get('/read/composer/:idx', function(req,res,next){
             var sql_comment = "select idx, nickname, comment from composer_comment where bulletin_id =?"
             board.query(sql_comment, [idx], function(err,comment){
                 if (err) console.error("err : " + err);
-                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"작곡가 구인 글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+                var sql_picvideo = "select * from picvideo where bulletin_id=? and boardtitle = 'composer'"
+                board.query(sql_picvideo, [idx], function(err, picvideos) {
+                    if (err) console.error("err : " + err);
+                    var picarr = []
+                    var vidarr = []
+                    for(var i=0; i<picvideos.length; i++){
+                        var picadd = "../../../assets/picvid/" + picvideos[i].picname;
+                        var vidadd = "../../../assets/picvid/" + picvideos[i].vidname;
+                        if(picvideos[i].picname != null){
+                            picarr.push(picadd)
+                        }
+                        if(picvideos[i].vidname != null){
+                            vidarr.push(vidadd)
+                        }
+                    }
+                    
+                    res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"작곡가 구인 글 상세", 
+                        row:row[0], 
+                        comment:comment, 
+                        comment_length : comment.length, 
+                        usernick:req.user.nickname,
+                        picarr:picarr,
+                        picarr_length:picarr.length,
+                        vidarr:vidarr,
+                        vidarr_length:vidarr.length
+                    })
+                })
             })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 작곡가 구인 '+idx+'번 게시글을 보고있습니다.('+ip+')')
         }
@@ -593,7 +707,7 @@ router.get('/write/singer', function(req,res,next){
     }
 })
 
-router.post('/write/singer', function(req,res,next){
+router.post('/write/singer', uploadpic.any(), function(req,res,next){
     var ip = requestIp.getClientIp(req);
     var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
@@ -615,6 +729,31 @@ router.post('/write/singer', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
+        var piccount=0;
+        var vidcount=0;
+        for(var i=0; i<req.files.length;i++){
+            if(req.files[i].mimetype.slice(0,5) == "image"){
+                piccount += 1
+            }
+            else if(req.files[i].mimetype.slice(0,5) == "video"){
+                vidcount += 1
+            }
+        }
+        for(var i=0;i<piccount;i++){
+            var sql_picupload = "insert into picvideo(picname, bulletin_id, boardtitle) values(?,?,'singer');"
+            var picdata = [req.files.shift().filename, idx_]
+            board.query(sql_picupload, picdata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        for(var i=0;i<vidcount;i++){
+            var sql_vidupload = "insert into picvideo(vidname, bulletin_id, boardtitle) values(?,?,'singer');"
+            var viddata = [req.files.shift().filename, idx_]
+            board.query(sql_vidupload, viddata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        
         console.log(logString+req.user.ID+'('+nickname+') 유저가 가수 구인 '+idx_+'번 게시글을 작성했습니다.('+ip+')')
         res.redirect('/board/read/singer/'+idx_);
     });
@@ -647,7 +786,33 @@ router.get('/read/singer/:idx', function(req,res,next){
             var sql_comment = "select idx, nickname, comment from singer_comment where bulletin_id =?"
             board.query(sql_comment, [idx], function(err,comment){
                 if (err) console.error("err : " + err);
-                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"가수 구인 글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+                var sql_picvideo = "select * from picvideo where bulletin_id=? and boardtitle = 'singer'"
+                board.query(sql_picvideo, [idx], function(err, picvideos) {
+                    if (err) console.error("err : " + err);
+                    var picarr = []
+                    var vidarr = []
+                    for(var i=0; i<picvideos.length; i++){
+                        var picadd = "../../../assets/picvid/" + picvideos[i].picname;
+                        var vidadd = "../../../assets/picvid/" + picvideos[i].vidname;
+                        if(picvideos[i].picname != null){
+                            picarr.push(picadd)
+                        }
+                        if(picvideos[i].vidname != null){
+                            vidarr.push(vidadd)
+                        }
+                    }
+                    
+                    res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"가수 구인 글 상세", 
+                        row:row[0], 
+                        comment:comment, 
+                        comment_length : comment.length, 
+                        usernick:req.user.nickname,
+                        picarr:picarr,
+                        picarr_length:picarr.length,
+                        vidarr:vidarr,
+                        vidarr_length:vidarr.length
+                    })
+                })
             })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 가수 구인 '+idx+'번 게시글을 보고있습니다.('+ip+')')
         }
@@ -835,7 +1000,7 @@ router.get('/write/free', function(req,res,next){
     }
 })
 
-router.post('/write/free', function(req,res,next){
+router.post('/write/free', uploadpic.any(), function(req,res,next){
     var ip = requestIp.getClientIp(req);
     var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
@@ -857,6 +1022,31 @@ router.post('/write/free', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
+        var piccount=0;
+        var vidcount=0;
+        for(var i=0; i<req.files.length;i++){
+            if(req.files[i].mimetype.slice(0,5) == "image"){
+                piccount += 1
+            }
+            else if(req.files[i].mimetype.slice(0,5) == "video"){
+                vidcount += 1
+            }
+        }
+        for(var i=0;i<piccount;i++){
+            var sql_picupload = "insert into picvideo(picname, bulletin_id, boardtitle) values(?,?,'free');"
+            var picdata = [req.files.shift().filename, idx_]
+            board.query(sql_picupload, picdata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        for(var i=0;i<vidcount;i++){
+            var sql_vidupload = "insert into picvideo(vidname, bulletin_id, boardtitle) values(?,?,'free');"
+            var viddata = [req.files.shift().filename, idx_]
+            board.query(sql_vidupload, viddata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        
         console.log(logString+req.user.ID+'('+nickname+') 유저가 자유게시판 '+idx_+'번 게시글을 작성했습니다.('+ip+')')
         res.redirect('/board/read/free/'+idx_);
     });
@@ -889,7 +1079,33 @@ router.get('/read/free/:idx', function(req,res,next){
             var sql_comment = "select idx, nickname, comment from free_comment where bulletin_id =?"
             board.query(sql_comment, [idx], function(err,comment){
                 if (err) console.error("err : " + err);
-                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"자유게시판 글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+                var sql_picvideo = "select * from picvideo where bulletin_id=? and boardtitle = 'free'"
+                board.query(sql_picvideo, [idx], function(err, picvideos) {
+                    if (err) console.error("err : " + err);
+                    var picarr = []
+                    var vidarr = []
+                    for(var i=0; i<picvideos.length; i++){
+                        var picadd = "../../../assets/picvid/" + picvideos[i].picname;
+                        var vidadd = "../../../assets/picvid/" + picvideos[i].vidname;
+                        if(picvideos[i].picname != null){
+                            picarr.push(picadd)
+                        }
+                        if(picvideos[i].vidname != null){
+                            vidarr.push(vidadd)
+                        }
+                    }
+                    
+                    res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"자유게시판 글 상세", 
+                        row:row[0], 
+                        comment:comment, 
+                        comment_length : comment.length, 
+                        usernick:req.user.nickname,
+                        picarr:picarr,
+                        picarr_length:picarr.length,
+                        vidarr:vidarr,
+                        vidarr_length:vidarr.length
+                    })
+                })
             })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 자유게시판 '+idx+'번 게시글을 보고있습니다.('+ip+')')
         }
@@ -1077,7 +1293,7 @@ router.get('/write/suggestion', function(req,res,next){
     }
 })
 
-router.post('/write/suggestion', function(req,res,next){
+router.post('/write/suggestion', uploadpic.any(), function(req,res,next){
     var ip = requestIp.getClientIp(req);
     var nickname = req.user.nickname // var name = req.body.name
     var title = req.body.title
@@ -1099,6 +1315,31 @@ router.post('/write/suggestion', function(req,res,next){
         if(!idx_) // 글이 없으면 NULL
             idx_ = 1;
 
+        var piccount=0;
+        var vidcount=0;
+        for(var i=0; i<req.files.length;i++){
+            if(req.files[i].mimetype.slice(0,5) == "image"){
+                piccount += 1
+            }
+            else if(req.files[i].mimetype.slice(0,5) == "video"){
+                vidcount += 1
+            }
+        }
+        for(var i=0;i<piccount;i++){
+            var sql_picupload = "insert into picvideo(picname, bulletin_id, boardtitle) values(?,?,'suggestion');"
+            var picdata = [req.files.shift().filename, idx_]
+            board.query(sql_picupload, picdata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        for(var i=0;i<vidcount;i++){
+            var sql_vidupload = "insert into picvideo(vidname, bulletin_id, boardtitle) values(?,?,'suggestion');"
+            var viddata = [req.files.shift().filename, idx_]
+            board.query(sql_vidupload, viddata, function(err,rows) {
+                if (err) console.error("err : " + err);
+            })
+        }
+        
         console.log(logString+req.user.ID+'('+nickname+') 유저가 건의사항 '+idx_+'번 게시글을 작성했습니다.('+ip+')')
         res.redirect('/board/read/suggestion/'+idx_);
     });
@@ -1131,7 +1372,33 @@ router.get('/read/suggestion/:idx', function(req,res,next){
             var sql_comment = "select idx, nickname, comment from suggestion_comment where bulletin_id =?"
             board.query(sql_comment, [idx], function(err,comment){
                 if (err) console.error("err : " + err);
-                res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"건의사항 글 상세", row:row[0], comment:comment, comment_length : comment.length, usernick:req.user.nickname})
+                var sql_picvideo = "select * from picvideo where bulletin_id=? and boardtitle = 'suggestion'"
+                board.query(sql_picvideo, [idx], function(err, picvideos) {
+                    if (err) console.error("err : " + err);
+                    var picarr = []
+                    var vidarr = []
+                    for(var i=0; i<picvideos.length; i++){
+                        var picadd = "../../../assets/picvid/" + picvideos[i].picname;
+                        var vidadd = "../../../assets/picvid/" + picvideos[i].vidname;
+                        if(picvideos[i].picname != null){
+                            picarr.push(picadd)
+                        }
+                        if(picvideos[i].vidname != null){
+                            vidarr.push(vidadd)
+                        }
+                    }
+                    
+                    res.render('read.ejs', {'ID':id, 'nickname': nickname, title:"건의사항 글 상세", 
+                        row:row[0], 
+                        comment:comment, 
+                        comment_length : comment.length, 
+                        usernick:req.user.nickname,
+                        picarr:picarr,
+                        picarr_length:picarr.length,
+                        vidarr:vidarr,
+                        vidarr_length:vidarr.length
+                    })
+                })
             })
             console.log(logString+req.user.ID+'('+nickname+') 유저가 건의사항 '+idx+'번 게시글을 보고있습니다.('+ip+')')
         }

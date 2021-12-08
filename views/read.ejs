@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>묵호 - <%= row.title %></title>
+    <title>가수와 작곡가의 만남 - <%= row.title %></title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
     <!-- Bootstrap icons-->
@@ -10,13 +10,23 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css?after" rel="stylesheet" />
-
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js" integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+    <link href="https://unpkg.com/@silvermine/videojs-quality-selector/dist/css/quality-selector.css" rel="stylesheet">
+    <script src="https://unpkg.com/@silvermine/videojs-quality-selector/dist/js/silvermine-videojs-quality-selector.min.js"></script>
+    <style>
+        .video-js .vjs-big-play-button {
+        background-color: #B37D5B;
+        opacity: .6;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
-            <a class="navbar-brand" href="/main">묵호의 놀이터</a>
+            <a class="navbar-brand" href="/main">가수와 작곡가의 만남</a>
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="/about" class="nav-link px-2 link-dark">About</a></li>
                 <li><a href="/board" class="nav-link px-2 link-dark">게시판</a></li>
@@ -76,6 +86,36 @@
                 <tr>
                     <td>내용</td>
                     <td><textarea name="content" id="content" cols="30" rows="10" required><%=row.content%></textarea></td>
+                </tr>
+                <tr>
+                    <td>사진 및 동영상</td>
+                    <td>
+                        <div class="bx_group">
+                            <a class = "bx_content">
+                                <%
+                                    for(var i=0; i<picarr_length;i++){
+                                        var picdata = picarr[i]
+                                %>
+                                    <img src="<%=picdata%>" width = "250" height = "250" alt="...">  
+                                    
+                                <%
+                                    }
+                                %>
+                                <%
+                                for(var i=0; i<vidarr_length;i++){
+                                    var viddata = vidarr[i]
+                                    
+                                %>
+                                <video id="video_<%=i%>" class="video-js vjs-big-play-button vjs-big-play-centered vjs-fluid" controls preload="auto" width="1000" height="450" data-setup='{}'>
+                                    <source src="<%=viddata%>" type="video/mp4" label="720P" selected="true">
+                                </video>
+                                <%
+                                    }
+                                %>
+                                
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>변경일</td>

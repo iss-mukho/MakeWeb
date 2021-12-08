@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>묵호 - 글쓰기</title>
+    <title>가수와 작곡가의 만남 - 글쓰기</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
     <!-- Bootstrap icons-->
@@ -10,12 +10,16 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css?after" rel="stylesheet" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
-            <a class="navbar-brand" href="/main">묵호의 놀이터</a>
+            <a class="navbar-brand" href="/main">가수와 작곡가의 만남</a>
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="/about" class="nav-link px-2 link-dark">About</a></li>
                 <li><a href="/board" class="nav-link px-2 link-dark">게시판</a></li>
@@ -54,7 +58,7 @@
         <%
         }
         %>
-        <form action="/board/write/<%=addr%>" method="post">
+        <form action="/board/write/<%=addr%>" method="post" enctype="multipart/form-data">
         
             <table border="1">
                 <tr>
@@ -68,12 +72,29 @@
                 <tr>
                     <td>내용</td>
                     <td><textarea name="content" id="content" cols="30" rows="10" required></textarea></td>
+                </tr> 
+                <tr>
+                    <td>
+                        사진 업로드
+                    </td>
+                    <td>
+                        <input type='file' name='uploadpic' id='uploadpic' multiple='multiple' />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        동영상 업로드
+                    </td>
+                    <td>
+                        <input type='file' name='uploadpic' id='uploadpic' multiple='multiple' />
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <button type="submit">글쓰기</button>
                     </td>
                 </tr>
+               
             </table>
         </form>
     </div>
